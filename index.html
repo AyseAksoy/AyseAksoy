@@ -374,6 +374,41 @@ a { color: var(--accent); }
 .card h3 a.sub { color: var(--muted); }
 .card h3 a.sub:hover { color: var(--accent); }
 
+/* ---------- Gantt chart ---------- */
+.gc { overflow-x: auto; --nw: 250px; --pd: 12px; }
+.gc-inner { position: relative; min-width: max-content; }
+.gc-row { display: flex; align-items: stretch; min-height: 38px; border-bottom: 1px solid var(--line-2); }
+.gc-name { position: sticky; left: 0; z-index: 2; width: var(--nw); flex: none; background: var(--surface); padding: 8px 12px 8px 4px; font-size: 13.5px; display: flex; align-items: center; gap: 8px; border-right: 1px solid var(--line); }
+.gc-track { position: relative; flex: none; background-image: repeating-linear-gradient(to right, transparent 0 calc(var(--pd) * 7 - 1px), var(--line-2) calc(var(--pd) * 7 - 1px) calc(var(--pd) * 7)); }
+.gc-head .gc-name { font-size: 12px; color: var(--muted); font-weight: 600; }
+.gc-head .gc-track { display: flex; background: none; }
+.gc-wk { flex: none; text-align: center; font-size: 11.5px; color: var(--muted); padding: 6px 0; border-left: 1px solid var(--line-2); line-height: 1.25; }
+.gc-wk b { display: block; color: var(--text-2); font-size: 12px; }
+.gc-wk.cur { background: var(--accent-soft); }
+.gc-wk.cur b { color: var(--accent-ink); }
+.gc-grp .gc-name { font-weight: 650; cursor: pointer; user-select: none; }
+.gc-grp .gc-name .car { color: var(--muted); width: 12px; display: inline-block; transition: transform .15s; }
+.gc-grp.collapsed .gc-name .car { transform: rotate(-90deg); }
+.gc-grp { background: var(--surface-2); }
+.gc-grp .gc-name { background: var(--surface-2); }
+.gc-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--c); flex: none; }
+.gc-item .gc-name { padding-left: 28px; color: var(--text-2); }
+.gc-bar { position: absolute; top: 8px; height: 22px; border-radius: 7px; background: var(--cs); border: 1px solid color-mix(in srgb, var(--c) 45%, transparent); overflow: hidden; cursor: pointer; display: flex; align-items: center; }
+.gc-bar > i { position: absolute; inset: 0 auto 0 0; background: var(--c); opacity: .35; }
+.gc-bar > span { position: relative; font-size: 11px; font-weight: 600; color: var(--c); padding: 0 6px; white-space: nowrap; }
+.gc-bar:hover { outline: 2px solid var(--c); }
+.gc-bar.done { background: var(--c); }
+.gc-bar.done > span { color: #fff; }
+.gc-sum { position: absolute; top: 15px; height: 8px; border-radius: 99px; background: color-mix(in srgb, var(--c) 30%, transparent); overflow: hidden; }
+.gc-sum > i { position: absolute; inset: 0 auto 0 0; background: var(--c); }
+.gc-ms { position: absolute; top: 10px; width: 16px; height: 16px; background: var(--c); transform: rotate(45deg); border-radius: 3px; cursor: pointer; }
+.gc-line { position: absolute; top: 0; bottom: 0; width: 2px; z-index: 1; pointer-events: none; }
+.gc-line.today { background: var(--rose); }
+.gc-line.today::before { content: "Today"; position: absolute; bottom: 4px; left: 4px; font-size: 10.5px; font-weight: 700; color: var(--rose); background: var(--surface); padding: 0 3px; border-radius: 4px; }
+.gc-line.end { border-left: 2px dashed var(--muted); width: 0; opacity: .6; }
+@media (max-width: 520px) { .gc { --nw: 150px; --pd: 10px; } .gc-name { font-size: 12.5px; } .gc-item .gc-name { padding-left: 14px; } }
+.gc-name .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+
 </style>
 </head>
 <body>
@@ -408,6 +443,10 @@ a { color: var(--accent); }
       <a href="#goals" data-view="goals">
         <svg viewBox="0 0 24 24"><path d="M4 6h10M4 12h16M4 18h7"/></svg>
         Goals
+      </a>
+      <a href="#gantt" data-view="gantt">
+        <svg viewBox="0 0 24 24"><path d="M3 4v16h18"/><rect x="6" y="6" width="7" height="3" rx="1"/><rect x="9" y="11" width="9" height="3" rx="1"/><rect x="7" y="16" width="5" height="2.5" rx="1"/></svg>
+        Gantt chart
       </a>
       <a href="#daily" data-view="daily">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.5 2.5L16 9.5"/></svg>
@@ -588,6 +627,24 @@ a { color: var(--accent); }
       <div class="board" id="board"></div>
     </section>
 
+    <!-- ============ GANTT CHART ============ -->
+    <section class="view" id="view-gantt">
+      <div class="view-head">
+        <div>
+          <h2>Gantt chart</h2>
+          <p id="ganttSub">Your semester plan day by day. Click a bar to edit it or update its progress.</p>
+        </div>
+        <div class="week-nav">
+          <button class="btn ghost" id="gcToday">Jump to today</button>
+          <button class="btn" id="gcAdd">+ Item</button>
+        </div>
+      </div>
+      <div class="card" style="padding:12px">
+        <div class="gc" id="gcWrap"></div>
+        <div class="g-legend" id="gcLegend" style="margin:12px 4px 0"></div>
+      </div>
+    </section>
+
     <!-- ============ GOALS ============ -->
     <section class="view" id="view-goals">
       <div class="view-head">
@@ -699,6 +756,29 @@ a { color: var(--accent); }
   </form>
 </div>
 
+<!-- Gantt item editor -->
+<div class="modal-bg" id="gcModal">
+  <form class="modal" id="gcForm">
+    <h3 id="gcmTitle">Gantt item</h3>
+    <label for="gcmName">Title</label>
+    <input class="input" id="gcmName" required>
+    <label for="gcmCourse">Group</label>
+    <select class="input" id="gcmCourse"></select>
+    <div class="row2">
+      <div><label for="gcmStart">Start</label><input class="input" type="date" id="gcmStart" required></div>
+      <div><label for="gcmEnd">End</label><input class="input" type="date" id="gcmEnd" required></div>
+    </div>
+    <label style="display:flex;gap:8px;align-items:center;color:var(--text-2);font-size:14px;font-weight:500;margin-top:12px"><input type="checkbox" id="gcmMilestone"> Milestone (single day)</label>
+    <label for="gcmProg">Progress: <span id="gcmProgVal">0</span>%</label>
+    <input type="range" min="0" max="100" step="5" id="gcmProg" style="width:100%">
+    <div class="actions">
+      <button type="button" class="btn ghost danger" id="gcmDelete">Delete</button>
+      <button type="button" class="btn ghost" id="gcmCancel">Cancel</button>
+      <button type="submit" class="btn">Save</button>
+    </div>
+  </form>
+</div>
+
 <!-- Goal editor -->
 <div class="modal-bg" id="goalModal">
   <form class="modal" id="goalForm">
@@ -742,7 +822,7 @@ window.CONFIG = {
   classesEnd: "2026-12-29",  // last day of classes (class blocks are hidden after this date)
   dayStart: 7,               // first hour shown in the weekly view
   dayEnd: 24,                // last hour shown in the weekly view
-  dataVersion: 6
+  dataVersion: 7
 };
 
 /* Courses — color: green | teal | amber | violet | rose | blue | slate */
@@ -770,8 +850,9 @@ window.TYPES = {
 const R = (id, days, start, end, title, type, course, note, extra) => ({ id, days, start, end, title, type, course: course || "", note: note || "", ...(extra || {}) });
 
 /* Physics lab every 2 weeks, Wednesday 13:30–15:00 (replaces the Physics lecture that week).
-   Week 1 starts Oct 10, so lab weeks are: 2, 4, 6, 8, 10, 12 */
-const FIZ_LAB_WEEKS = [2, 4, 6, 8, 10, 12];
+   Week 1 starts Oct 10, so lab weeks are: 2, 4, 6, 8, 10
+   (week 12's Wednesday is Dec 30, after classes end on Dec 29 — add it back here if it is held) */
+const FIZ_LAB_WEEKS = [2, 4, 6, 8, 10];
 
 window.DEFAULT_ROUTINE = [
   /* ---------- Fixed classes (haftalikDersProgrami.pdf) ---------- */
@@ -847,10 +928,35 @@ window.DEFAULT_GOALS = [
   { id: "g2", title: "Physics I: 30 problems a week", startW: 1, endW: 12, progress: 0, course: "PHY101" },
   { id: "g3", title: "Mathematics I: end-of-topic problem sets", startW: 1, endW: 12, progress: 0, course: "MAT101" },
   { id: "g4", title: "Hand in chemistry lab reports on time", startW: 1, endW: 12, progress: 0, course: "CHE107" },
-  { id: "g9", title: "Physics lab reports (6 reports)", startW: 2, endW: 12, progress: 0, course: "PHY101", note: "Lab weeks: 2, 4, 6, 8, 10, 12" },
+  { id: "g9", title: "Physics lab reports (5 reports)", startW: 2, endW: 10, progress: 0, course: "PHY101", note: "Lab weeks: 2, 4, 6, 8, 10" },
   { id: "g5", title: "Midterm preparation", startW: 3, endW: 6, progress: 0, course: "", note: "Add the dates under 'Courses & exams'" },
   { id: "g6", title: "Final exam preparation", startW: 12, endW: 15, progress: 0, course: "" },
   { id: "g8", title: "Python: finish the basics + 3 mini projects", startW: 1, endW: 15, progress: 0, course: "PYTHON" }
+];
+
+/* Gantt chart items — course: a course code from COURSES, or "" for General.
+   start / end are dates (YYYY-MM-DD); milestone: true shows a single-day diamond */
+const G = (id, course, title, start, end, extra) => ({ id, course, title, start, end, progress: 0, ...(extra || {}) });
+window.DEFAULT_GANTT = [
+  G("gc-mid", "", "Midterm preparation", "2026-10-24", "2026-11-20", { note: "Adjust once the midterm dates are known" }),
+  G("gc-end", "", "Classes end", "2026-12-29", "2026-12-29", { milestone: true }),
+  G("gc-fin", "", "Final exam preparation", "2026-12-26", "2027-01-22"),
+  G("gc-mat", "MAT101", "Weekly problem sets", "2026-10-10", "2026-12-29"),
+  G("gc-fiz1", "PHY101", "Physics lab 1 + report", "2026-10-21", "2026-10-23"),
+  G("gc-fiz2", "PHY101", "Physics lab 2 + report", "2026-11-04", "2026-11-06"),
+  G("gc-fiz3", "PHY101", "Physics lab 3 + report", "2026-11-18", "2026-11-20"),
+  G("gc-fiz4", "PHY101", "Physics lab 4 + report", "2026-12-02", "2026-12-04"),
+  G("gc-fiz5", "PHY101", "Physics lab 5 + report", "2026-12-16", "2026-12-18"),
+  G("gc-kim", "CHE107", "Weekly chemistry lab + report", "2026-10-14", "2026-12-25"),
+  G("gc-eee", "EEE101", "Weekly lecture review", "2026-10-15", "2026-12-29"),
+  G("gc-ata", "ATA101", "Watch online lecture recordings (ATA, TDE)", "2026-10-13", "2026-12-29"),
+  G("gc-py1", "PYTHON", "Basics: variables, conditions, loops", "2026-10-10", "2026-10-30"),
+  G("gc-py2", "PYTHON", "Functions & lists", "2026-10-31", "2026-11-20"),
+  G("gc-py3", "PYTHON", "Mini project 1", "2026-11-14", "2026-11-27"),
+  G("gc-py4", "PYTHON", "Dictionaries, files & modules", "2026-11-28", "2026-12-18"),
+  G("gc-py5", "PYTHON", "Mini project 2", "2026-12-12", "2026-12-25"),
+  G("gc-py6", "PYTHON", "Classes & objects (OOP basics)", "2026-12-26", "2027-01-08"),
+  G("gc-py7", "PYTHON", "Mini project 3", "2027-01-09", "2027-01-22")
 ];
 
 /* "Things I can do every day" list — starts empty, add items on the page */
@@ -950,6 +1056,7 @@ window.TR_EN = {
       tasks: clone(window.DEFAULT_TASKS),
       habits: clone(window.DEFAULT_HABITS), habitLog: {},
       goals: clone(window.DEFAULT_GOALS),
+      gantt: clone(window.DEFAULT_GANTT || []), ganttCollapsed: {},
       notes: {},
       exams: clone(window.DEFAULT_EXAMS || []),
       activity: [{ t: Date.now(), msg: "Planner created — week 1 has started" }],
@@ -973,6 +1080,10 @@ window.TR_EN = {
     if ((state.v || 1) < 3) { // sport removed
       state.goals = state.goals.filter((g) => g.id !== "g7");
       state.habits = state.habits.filter((h) => !/^spor/i.test(h.name));
+    }
+    if ((state.v || 1) < 7) { // physics lab in week 12 falls after classes end
+      const g9 = state.goals.find((g) => g.id === "g9"); const d9 = window.DEFAULT_GOALS.find((g) => g.id === "g9");
+      if (g9 && d9) { g9.title = d9.title; g9.endW = d9.endW; g9.note = d9.note; }
     }
     if ((state.v || 1) < 6) { // switched to English
       const tr = window.TR_EN || {};
@@ -1039,7 +1150,7 @@ window.TR_EN = {
   }
 
   /* ---------- routing ---------- */
-  const TITLES = { today: "Today", week: "Weekly schedule", courses: "Courses & exams", tasks: "Tasks", goals: "Goals", daily: "Things I can do every day", notes: "Daily notes", history: "Previous weeks" };
+  const TITLES = { today: "Today", week: "Weekly schedule", courses: "Courses & exams", tasks: "Tasks", goals: "Goals", daily: "Things I can do every day", notes: "Daily notes", history: "Previous weeks", gantt: "Gantt chart" };
   function route() {
     let v = location.hash.replace("#", "");
     if (!TITLES[v]) v = "today";
@@ -1049,11 +1160,12 @@ window.TR_EN = {
     document.body.classList.remove("nav-open");
     render(v);
     window.scrollTo(0, 0);
+    if (v === "gantt") gcScrollToday();
   }
   function render(v) {
     v = v || (location.hash.replace("#", "") || "today");
     renderSide();
-    ({ today: renderToday, week: renderWeek, courses: renderCourses, tasks: renderBoard, goals: renderGoals, daily: renderHabits, notes: renderNotes, history: renderHistory }[v] || renderToday)();
+    ({ today: renderToday, week: renderWeek, courses: renderCourses, tasks: renderBoard, goals: renderGoals, daily: renderHabits, notes: renderNotes, history: renderHistory, gantt: renderGantt }[v] || renderToday)();
   }
 
   /* ---------- sidebar ---------- */
@@ -1440,6 +1552,84 @@ window.TR_EN = {
   });
   $("#addGoalBtn").addEventListener("click", () => openGoal(null));
 
+  /* ---------- GANTT CHART ---------- */
+  const GC_DAYS = C.weeks * 7;
+  const dayIdx = (k) => dayDiff(START, parseKey(k));
+  function gcGroups() {
+    const order = ["", ...window.COURSES.map((c) => c.code)];
+    const groups = order.map((code) => ({ code, items: state.gantt.filter((g) => (g.course || "") === code) })).filter((g) => g.items.length);
+    for (const g of groups) g.items.sort((a, b) => a.start.localeCompare(b.start) || a.end.localeCompare(b.end));
+    return groups;
+  }
+  function renderGantt() {
+    const wrap = $("#gcWrap"), pd = parseFloat(getComputedStyle(wrap).getPropertyValue("--pd")) || 12;
+    const W = GC_DAYS * pd, cw = curWeek(), today = key(now()), ti = dayIdx(today);
+    let html = `<div class="gc-inner" style="width:calc(var(--nw) + ${W}px)">`;
+    html += `<div class="gc-row gc-head"><div class="gc-name">Item</div><div class="gc-track" style="width:${W}px">${Array.from({ length: C.weeks }, (_, i) =>
+      `<div class="gc-wk ${i + 1 === cw ? "cur" : ""}" style="width:${7 * pd}px"><b>W${i + 1}</b>${fmtShort(weekStart(i + 1))}</div>`).join("")}</div></div>`;
+    const bar = (g, c) => {
+      const s = Math.max(0, dayIdx(g.start)), e = Math.min(GC_DAYS - 1, dayIdx(g.end));
+      if (e < 0 || s > GC_DAYS - 1) return "";
+      const tip = esc(`${g.title} · ${fmtShort(parseKey(g.start))}${g.end !== g.start ? " – " + fmtShort(parseKey(g.end)) : ""} · ${g.progress}%`);
+      if (g.milestone) return `<div class="gc-ms" data-gc="${g.id}" title="${tip}" style="${cv(c)};left:${s * pd + pd / 2 - 8}px"></div>`;
+      const w = (e - s + 1) * pd;
+      return `<div class="gc-bar ${g.progress >= 100 ? "done" : ""}" data-gc="${g.id}" title="${tip}" style="${cv(c)};left:${s * pd + 1}px;width:${w - 2}px"><i style="width:${g.progress}%"></i><span>${w > 34 ? g.progress + "%" : ""}</span></div>`;
+    };
+    for (const grp of gcGroups()) {
+      const crs = course(grp.code), color = crs ? crs.color : "slate", name = crs ? crs.name : "General";
+      const collapsed = !!state.ganttCollapsed[grp.code || "_"];
+      const s = Math.max(0, Math.min(...grp.items.map((g) => dayIdx(g.start)))), e = Math.min(GC_DAYS - 1, Math.max(...grp.items.map((g) => dayIdx(g.end))));
+      const avg = Math.round(grp.items.reduce((a, g) => a + g.progress, 0) / grp.items.length);
+      html += `<div class="gc-row gc-grp ${collapsed ? "collapsed" : ""}" style="${cv(color)}">
+        <div class="gc-name" data-gc-toggle="${grp.code || "_"}"><span class="car">▾</span><span class="gc-dot"></span><span class="nm" title="${esc(name)}">${esc(name)}</span><span style="color:var(--muted);font-weight:500;flex:none">· ${grp.items.length}</span></div>
+        <div class="gc-track" style="width:${W}px"><div class="gc-sum" style="left:${s * pd}px;width:${(e - s + 1) * pd}px" title="${avg}% average"><i style="width:${avg}%"></i></div></div></div>`;
+      if (collapsed) continue;
+      for (const g of grp.items) {
+        html += `<div class="gc-row gc-item"><div class="gc-name" title="${esc(g.note || g.title)}">${esc(g.title)}</div><div class="gc-track" style="width:${W}px">${bar(g, color)}</div></div>`;
+      }
+    }
+    if (ti >= 0 && ti < GC_DAYS) html += `<div class="gc-line today" style="left:calc(var(--nw) + ${ti * pd + pd / 2}px)"></div>`;
+    const ei = dayIdx(key(CLASSES_END));
+    if (ei >= 0 && ei < GC_DAYS) html += `<div class="gc-line end" style="left:calc(var(--nw) + ${(ei + 1) * pd}px)" title="Classes end"></div>`;
+    $("#gcWrap").innerHTML = html + `</div>`;
+    $("#gcLegend").innerHTML = `<span><i style="background:var(--rose)"></i>Today</span><span><i style="background:transparent;border:2px dashed var(--muted)"></i>Classes end (${fmtShort(CLASSES_END)})</span><span><i style="background:var(--slate);transform:rotate(45deg)"></i>Milestone</span><span>Click a group name to collapse it</span>`;
+  }
+  function gcScrollToday() {
+    const wrap = $("#gcWrap"), pd = parseFloat(getComputedStyle(wrap).getPropertyValue("--pd")) || 12;
+    wrap.scrollLeft = Math.max(0, dayIdx(key(now())) * pd - 7 * pd);
+  }
+  let editingGc = null;
+  function openGc(id) {
+    const g = id ? state.gantt.find((x) => x.id === id) : { id: "gc-" + uid(), course: "", title: "", start: key(now()), end: key(addDays(now(), 6)), progress: 0 };
+    if (!g) return;
+    editingGc = { g, isNew: !id };
+    $("#gcmTitle").textContent = id ? "Edit Gantt item" : "New Gantt item";
+    $("#gcmCourse").innerHTML = `<option value="">General</option>` + window.COURSES.map((c) => `<option value="${c.code}">${c.code} · ${esc(c.name)}</option>`).join("");
+    $("#gcmName").value = g.title; $("#gcmCourse").value = g.course || ""; $("#gcmStart").value = g.start; $("#gcmEnd").value = g.end;
+    $("#gcmMilestone").checked = !!g.milestone; $("#gcmProg").value = g.progress; $("#gcmProgVal").textContent = g.progress;
+    $("#gcmDelete").style.display = id ? "" : "none";
+    $("#gcModal").classList.add("open");
+  }
+  $("#gcmProg").addEventListener("input", (e) => ($("#gcmProgVal").textContent = e.target.value));
+  $("#gcmCancel").addEventListener("click", closeModals);
+  $("#gcForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const { g, isNew } = editingGc, prev = g.progress;
+    let s = $("#gcmStart").value, en = $("#gcmEnd").value;
+    const ms = $("#gcmMilestone").checked;
+    if (ms) en = s; else if (en < s) [s, en] = [en, s];
+    Object.assign(g, { title: $("#gcmName").value.trim(), course: $("#gcmCourse").value, start: s, end: en, milestone: ms, progress: +$("#gcmProg").value });
+    if (isNew) { state.gantt.push(g); log(`Gantt item added: ${g.title}`); }
+    else log(g.progress !== prev ? `Gantt progress ${g.progress}%: ${g.title}` : `Gantt item updated: ${g.title}`);
+    save(); closeModals(); editingGc = null; render();
+  });
+  $("#gcmDelete").addEventListener("click", () => {
+    state.gantt = state.gantt.filter((x) => x.id !== editingGc.g.id);
+    log(`Gantt item deleted: ${editingGc.g.title}`); save(); closeModals(); render();
+  });
+  $("#gcAdd").addEventListener("click", () => openGc(null));
+  $("#gcToday").addEventListener("click", gcScrollToday);
+
   /* ---------- EVERY-DAY LIST ---------- */
   let habitWeek = curWeek();
   function renderHabits() {
@@ -1594,7 +1784,7 @@ window.TR_EN = {
 
   /* ---------- global click handler ---------- */
   document.addEventListener("click", (e) => {
-    const t = e.target.closest("button, [data-edit], [data-goal], [data-note]");
+    const t = e.target.closest("button, [data-edit], [data-goal], [data-note], [data-gc], [data-gc-toggle]");
     if (!t) return;
     const ds = t.dataset;
     if (ds.done) {
@@ -1622,6 +1812,11 @@ window.TR_EN = {
     } else if (ds.mood) {
       const k = ds.day, cur = (state.notes[k] || {}).mood;
       state.notes[k] = { ...(state.notes[k] || {}), mood: cur === ds.mood ? "" : ds.mood }; save(); render();
+    } else if (ds.gc) {
+      openGc(ds.gc);
+    } else if (ds.gcToggle) {
+      const k = ds.gcToggle; if (state.ganttCollapsed[k]) delete state.ganttCollapsed[k]; else state.ganttCollapsed[k] = true;
+      save(); renderGantt();
     } else if (ds.goal) {
       openGoal(ds.goal);
     } else if (ds.note) {
