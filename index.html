@@ -10,7 +10,7 @@
   <style>
 /* My Daily Planner — styles */
 :root {
-  --bg: #f4f5f7;
+  --bg: #ffffff;
   --surface: #ffffff;
   --surface-2: #f8f9fa;
   --line: #e6e8eb;
@@ -41,17 +41,6 @@
   color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0f1214; --surface: #171b1e; --surface-2: #1c2125; --line: #2a3035; --line-2: #22282c;
-    --text: #e9ecef; --text-2: #b6bdc4; --muted: #7f8891;
-    --accent: #3fb07a; --accent-2: #56c28e; --accent-soft: #17302a; --accent-ink: #9fe0bf;
-    --amber: #e5a93a; --amber-soft: #33291a; --teal: #3fb4c6; --teal-soft: #163036;
-    --violet: #9a8df0; --violet-soft: #26233f; --rose: #e57b95; --rose-soft: #3a2029; --blue: #6ea0f0; --blue-soft: #1b2a44;
-    --slate: #9aa3ad; --slate-soft: #252b30;
-    --shadow: none; color-scheme: dark;
-  }
-}
 :root[data-theme="dark"] {
   --bg: #0f1214; --surface: #171b1e; --surface-2: #1c2125; --line: #2a3035; --line-2: #22282c;
   --text: #e9ecef; --text-2: #b6bdc4; --muted: #7f8891;
@@ -369,6 +358,22 @@ textarea.input { width: 100%; min-height: 140px; resize: vertical; line-height: 
   .hist-col .v { display: none; }
 }
 
+/* ---------- Theme switch ---------- */
+.theme-toggle {
+  display: flex; align-items: center; gap: 14px; width: 100%; padding: 11px 14px; border-radius: 10px;
+  border: 1px solid var(--line); background: var(--surface-2); color: var(--text-2); font-weight: 500; text-align: left;
+}
+.theme-toggle:hover { border-color: var(--accent); }
+.theme-toggle svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.7; flex: none; }
+.theme-toggle .sw { margin-left: auto; width: 36px; height: 20px; border-radius: 99px; background: var(--line); position: relative; transition: background .2s; flex: none; }
+.theme-toggle .sw::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.2); transition: transform .2s; }
+:root[data-theme="dark"] .theme-toggle .sw { background: var(--accent); }
+:root[data-theme="dark"] .theme-toggle .sw::after { transform: translateX(16px); }
+.topbar .theme-mini { margin-left: auto; }
+a { color: var(--accent); }
+.card h3 a.sub { color: var(--muted); }
+.card h3 a.sub:hover { color: var(--accent); }
+
 </style>
 </head>
 <body>
@@ -418,6 +423,14 @@ textarea.input { width: 100%; min-height: 140px; resize: vertical; line-height: 
       </a>
     </nav>
 
+    <div class="side-box" style="padding:0">
+      <button class="theme-toggle" id="themeBtn" type="button" aria-pressed="false">
+        <svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
+        <span id="themeLabel">Dark mode</span>
+        <span class="sw" aria-hidden="true"></span>
+      </button>
+    </div>
+
     <div>
       <div class="side-label">THIS WEEK</div>
       <div class="side-box">
@@ -435,7 +448,6 @@ textarea.input { width: 100%; min-height: 140px; resize: vertical; line-height: 
         <button id="exportBtn" title="Download your data as JSON">Back up</button>
         <button id="importBtn" title="Restore a JSON backup">Restore</button>
         <button id="resetBtn" title="Go back to the defaults in data.js">Reset</button>
-        <button id="themeBtn" title="Light / dark theme">Theme</button>
       </div>
       <input type="file" id="importFile" accept="application/json" hidden>
     </div>
@@ -446,6 +458,7 @@ textarea.input { width: 100%; min-height: 140px; resize: vertical; line-height: 
     <div class="topbar">
       <button id="openNav" aria-label="Open menu">☰</button>
       <b id="topTitle">Today</b>
+      <button class="theme-mini" id="themeBtnMobile" aria-label="Switch light / dark mode" title="Light / dark mode">◐</button>
     </div>
 
     <!-- ============ TODAY ============ -->
@@ -1639,14 +1652,20 @@ window.TR_EN = {
   $("#closeNav").addEventListener("click", () => document.body.classList.toggle("nav-open"));
   $("#scrim").addEventListener("click", () => document.body.classList.remove("nav-open"));
 
-  function applyTheme(t) { if (t) document.documentElement.setAttribute("data-theme", t); else document.documentElement.removeAttribute("data-theme"); }
-  let theme = null; try { theme = localStorage.getItem(THEME); } catch (e) { /* unavailable */ }
+  // Light (white) is the default; dark mode only when the user turns it on
+  function applyTheme(t) {
+    const dark = t === "dark";
+    if (dark) document.documentElement.setAttribute("data-theme", "dark"); else document.documentElement.removeAttribute("data-theme");
+    $("#themeBtn").setAttribute("aria-pressed", String(dark));
+  }
+  let theme = "light"; try { theme = localStorage.getItem(THEME) === "dark" ? "dark" : "light"; } catch (e) { /* unavailable */ }
   applyTheme(theme);
-  $("#themeBtn").addEventListener("click", () => {
-    const dark = theme ? theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
-    theme = dark ? "light" : "dark"; applyTheme(theme);
+  function toggleTheme() {
+    theme = theme === "dark" ? "light" : "dark"; applyTheme(theme);
     try { localStorage.setItem(THEME, theme); } catch (e) { /* unavailable */ }
-  });
+  }
+  $("#themeBtn").addEventListener("click", toggleTheme);
+  $("#themeBtnMobile").addEventListener("click", toggleTheme);
 
   $("#exportBtn").addEventListener("click", () => {
     const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
