@@ -1,0 +1,1693 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>My Daily Planner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+/* My Daily Planner — styles */
+:root {
+  --bg: #f4f5f7;
+  --surface: #ffffff;
+  --surface-2: #f8f9fa;
+  --line: #e6e8eb;
+  --line-2: #eef0f2;
+  --text: #16191d;
+  --text-2: #4b525b;
+  --muted: #8a919a;
+  --accent: #1f7a4f;
+  --accent-2: #2f9d68;
+  --accent-soft: #e8f4ee;
+  --accent-ink: #145236;
+  --amber: #d4930f;
+  --amber-soft: #fbf1dc;
+  --teal: #1b8a9c;
+  --teal-soft: #e2f3f5;
+  --violet: #6b5bd2;
+  --violet-soft: #ecebfb;
+  --rose: #c94f6d;
+  --rose-soft: #fae9ee;
+  --blue: #2f6fd6;
+  --blue-soft: #e6eefb;
+  --slate: #66707c;
+  --slate-soft: #eceef1;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --shadow: 0 1px 2px rgba(16, 24, 40, .04), 0 1px 3px rgba(16, 24, 40, .05);
+  --sidebar: 278px;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1214; --surface: #171b1e; --surface-2: #1c2125; --line: #2a3035; --line-2: #22282c;
+    --text: #e9ecef; --text-2: #b6bdc4; --muted: #7f8891;
+    --accent: #3fb07a; --accent-2: #56c28e; --accent-soft: #17302a; --accent-ink: #9fe0bf;
+    --amber: #e5a93a; --amber-soft: #33291a; --teal: #3fb4c6; --teal-soft: #163036;
+    --violet: #9a8df0; --violet-soft: #26233f; --rose: #e57b95; --rose-soft: #3a2029; --blue: #6ea0f0; --blue-soft: #1b2a44;
+    --slate: #9aa3ad; --slate-soft: #252b30;
+    --shadow: none; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1214; --surface: #171b1e; --surface-2: #1c2125; --line: #2a3035; --line-2: #22282c;
+  --text: #e9ecef; --text-2: #b6bdc4; --muted: #7f8891;
+  --accent: #3fb07a; --accent-2: #56c28e; --accent-soft: #17302a; --accent-ink: #9fe0bf;
+  --amber: #e5a93a; --amber-soft: #33291a; --teal: #3fb4c6; --teal-soft: #163036;
+  --violet: #9a8df0; --violet-soft: #26233f; --rose: #e57b95; --rose-soft: #3a2029; --blue: #6ea0f0; --blue-soft: #1b2a44;
+  --slate: #9aa3ad; --slate-soft: #252b30;
+  --shadow: none; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  font-family: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* ---------- Layout ---------- */
+.app { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar); flex: none; background: var(--surface);
+  border-right: 1px solid var(--line); padding: 22px 14px;
+  position: sticky; top: 0; height: 100vh; overflow-y: auto;
+  display: flex; flex-direction: column; gap: 18px;
+}
+.brand { display: flex; gap: 12px; align-items: flex-start; padding: 0 10px; }
+.logo {
+  width: 36px; height: 36px; border-radius: 10px; background: var(--accent);
+  color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 14px; flex: none;
+}
+.brand h1 { font-size: 16px; line-height: 1.25; margin: 0; font-weight: 650; }
+.brand small { color: var(--muted); font-size: 12.5px; }
+.menu-btn {
+  margin-left: auto; background: none; border: 0; color: var(--muted);
+  font-size: 18px; padding: 0 2px; line-height: 1;
+}
+.nav { display: flex; flex-direction: column; gap: 4px; }
+.nav a {
+  display: flex; align-items: center; gap: 14px; padding: 11px 14px; border-radius: 10px;
+  color: var(--text-2); text-decoration: none; font-weight: 500;
+}
+.nav a svg { width: 21px; height: 21px; stroke: currentColor; fill: none; stroke-width: 1.6; flex: none; }
+.nav a:hover { background: var(--surface-2); }
+.nav a.active { background: var(--accent-soft); color: var(--accent-ink); font-weight: 600; }
+.side-label { font-size: 11.5px; font-weight: 650; letter-spacing: .08em; color: var(--muted); padding: 0 10px; margin-bottom: 8px; }
+.side-box { padding: 0 10px; }
+.mini-week {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px;
+}
+.mini-week b { font-size: 20px; }
+.mini-week span { color: var(--muted); font-size: 12.5px; }
+.saved-box {
+  margin: auto 10px 0; background: var(--teal-soft); border-radius: 12px; padding: 12px 14px; font-size: 13px;
+}
+.saved-box b { color: var(--teal); display: block; margin-bottom: 4px; }
+.saved-box .row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+.saved-box button, .chip-btn {
+  border: 1px solid var(--line); background: var(--surface); border-radius: 8px;
+  padding: 5px 9px; font-size: 12.5px; color: var(--text-2);
+}
+.saved-box button:hover, .chip-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+.main { flex: 1; min-width: 0; padding: 28px 32px 60px; }
+.view-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+.view-head h2 { font-size: 26px; margin: 0; letter-spacing: -.02em; font-weight: 700; }
+.view-head p { margin: 2px 0 0; color: var(--muted); font-size: 14px; }
+.view { display: none; }
+.view.active { display: block; }
+
+/* ---------- Cards ---------- */
+.card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  box-shadow: var(--shadow); padding: 20px;
+}
+.card h3 { margin: 0 0 14px; font-size: 16px; font-weight: 650; display: flex; align-items: center; gap: 8px; justify-content: space-between; }
+.card h3 .sub { font-size: 13px; color: var(--muted); font-weight: 500; }
+.grid { display: grid; gap: 16px; }
+.stats { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-bottom: 16px; }
+.two { grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); margin-bottom: 16px; align-items: start; }
+.stat { text-align: center; display: flex; flex-direction: column; justify-content: center; min-height: 150px; }
+.stat .big { font-size: 42px; font-weight: 700; letter-spacing: -.03em; line-height: 1.1; }
+.stat .big small { font-size: 22px; color: var(--muted); font-weight: 600; }
+.stat .lbl { font-size: 12.5px; letter-spacing: .09em; font-weight: 600; color: var(--text-2); margin-top: 6px; text-transform: uppercase; }
+.stat .hint { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+.bar { height: 8px; background: var(--line-2); border-radius: 99px; overflow: hidden; margin-top: 16px; }
+.bar > i { display: block; height: 100%; background: var(--accent); border-radius: 99px; transition: width .4s; }
+.gauge { width: 100%; max-width: 190px; margin: 0 auto; display: block; }
+.legend { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; font-size: 13px; color: var(--text-2); margin-top: 6px; }
+.legend span::before { content: ""; display: inline-block; width: 3px; height: 13px; border-radius: 2px; margin-right: 6px; vertical-align: -2px; background: var(--c); }
+
+/* ---------- Today's schedule ---------- */
+.agenda { display: flex; flex-direction: column; gap: 8px; }
+.slot {
+  display: grid; grid-template-columns: 92px 1fr auto; gap: 12px; align-items: center;
+  padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line-2); background: var(--surface-2);
+  position: relative;
+}
+.slot::before { content: ""; position: absolute; left: 0; top: 10px; bottom: 10px; width: 3px; border-radius: 3px; background: var(--c, var(--slate)); }
+.slot .time { font-size: 13px; color: var(--text-2); font-weight: 550; }
+.slot .t { font-weight: 550; }
+.slot .meta { font-size: 12.5px; color: var(--muted); }
+.slot.done .t { text-decoration: line-through; color: var(--muted); }
+.slot.now { border-color: var(--accent); background: var(--accent-soft); }
+.slot.now .time::after { content: "NOW"; display: block; font-size: 10.5px; letter-spacing: .08em; color: var(--accent); font-weight: 700; }
+.slot.fixed .t::after { content: "fixed"; font-size: 10.5px; font-weight: 600; margin-left: 8px; color: var(--muted); border: 1px solid var(--line); border-radius: 6px; padding: 0 5px; vertical-align: 1px; }
+.check {
+  width: 26px; height: 26px; border-radius: 8px; border: 1.5px solid var(--line); background: var(--surface);
+  display: grid; place-items: center; padding: 0; color: transparent;
+}
+.check svg { width: 15px; height: 15px; stroke: currentColor; stroke-width: 2.5; fill: none; }
+.check.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+.empty { color: var(--muted); font-size: 14px; font-style: italic; padding: 12px 4px; }
+
+.tag { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; padding: 2px 8px; border-radius: 99px; background: var(--cs, var(--slate-soft)); color: var(--c, var(--slate)); font-weight: 600; }
+
+/* ---------- Form controls ---------- */
+.inline-form { display: flex; gap: 8px; flex-wrap: wrap; }
+.inline-form > * { min-width: 0; }
+.input, select.input, textarea.input {
+  border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 8px 11px; font-size: 14px;
+}
+.input:focus { outline: 2px solid var(--accent-soft); border-color: var(--accent); }
+.grow { flex: 1 1 160px; }
+.btn {
+  border: 0; background: var(--accent); color: #fff; border-radius: 10px; padding: 8px 14px; font-weight: 600; font-size: 14px;
+  display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+}
+.btn:hover { background: var(--accent-2); }
+.btn.ghost { background: var(--surface); color: var(--text-2); border: 1px solid var(--line); }
+.btn.ghost:hover { border-color: var(--accent); color: var(--accent); }
+.icon-btn { background: none; border: 0; color: var(--muted); padding: 4px 6px; border-radius: 6px; font-size: 14px; line-height: 1; }
+.icon-btn:hover { background: var(--line-2); color: var(--text); }
+
+/* ---------- 15-week timeline ---------- */
+.gantt { overflow-x: auto; --nc: 230px; }
+.gantt-inner { min-width: 760px; }
+.g-row { display: grid; grid-template-columns: var(--nc) repeat(var(--w), minmax(30px, 1fr)); align-items: center; position: relative; }
+.g-head { font-size: 12.5px; color: var(--muted); font-weight: 600; margin-bottom: 6px; }
+.g-head > div { text-align: center; padding: 6px 0; border-radius: 8px; }
+.g-head > div.cur { background: var(--line-2); color: var(--text); }
+.g-name { display: flex; gap: 10px; padding: 10px 10px 10px 0; font-size: 14px; align-items: baseline; }
+.g-name code { font-family: inherit; font-size: 12px; color: var(--muted); font-weight: 600; min-width: 26px; }
+.g-cell { height: 100%; min-height: 46px; border-left: 1px solid var(--line-2); }
+.g-cell.cur { background: color-mix(in srgb, var(--line-2) 70%, transparent); }
+.g-bar {
+  position: absolute; height: 26px; top: 50%; transform: translateY(-50%); border-radius: 99px;
+  background: var(--cs, var(--accent-soft)); overflow: hidden; display: flex; align-items: center;
+  font-size: 12px; font-weight: 600; color: var(--c, var(--accent-ink)); padding: 0 10px; white-space: nowrap;
+}
+.g-bar > i { position: absolute; inset: 0 auto 0 0; background: var(--c, var(--accent)); opacity: .28; }
+.g-bar > span { position: relative; }
+.g-legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12.5px; color: var(--muted); margin-top: 12px; }
+.g-legend i { display: inline-block; width: 12px; height: 12px; border-radius: 4px; vertical-align: -2px; margin-right: 6px; background: var(--line-2); }
+
+/* ---------- Weekly schedule ---------- */
+.week-nav { display: flex; align-items: center; gap: 8px; }
+.week-nav .label { font-weight: 650; min-width: 190px; text-align: center; }
+.week-grid { display: grid; grid-template-columns: 56px repeat(7, minmax(120px, 1fr)); min-width: 980px; position: relative; }
+.week-scroll { overflow-x: auto; }
+.wg-head { position: sticky; top: 0; background: var(--surface); z-index: 3; text-align: center; padding: 8px 4px 10px; border-bottom: 1px solid var(--line); }
+.wg-head b { display: block; font-size: 14px; }
+.wg-head span { font-size: 12px; color: var(--muted); }
+.wg-head.today b { color: var(--accent); }
+.wg-head.today span { color: var(--accent); font-weight: 600; }
+.wg-hours { position: relative; }
+.wg-hours div { position: absolute; right: 8px; font-size: 11.5px; color: var(--muted); transform: translateY(-7px); }
+.wg-col { position: relative; border-left: 1px solid var(--line-2); }
+.wg-col.today { background: color-mix(in srgb, var(--accent-soft) 45%, transparent); }
+.wg-line { position: absolute; left: 0; right: 0; border-top: 1px dashed var(--line-2); }
+.wg-block {
+  position: absolute; left: 4px; right: 4px; border-radius: 8px; padding: 4px 7px; overflow: hidden;
+  background: var(--cs); border-left: 3px solid var(--c); font-size: 12px; line-height: 1.25; cursor: pointer; color: var(--text);
+}
+.wg-block b { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-weight: 600; }
+.wg-block span { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wg-block span { color: var(--text-2); font-size: 11px; }
+.wg-block.done { opacity: .55; }
+.wg-block.done b { text-decoration: line-through; }
+.wg-block:hover { outline: 2px solid var(--c); }
+.now-line { position: absolute; left: 0; right: 0; border-top: 2px solid var(--rose); z-index: 2; }
+.now-line::before { content: ""; position: absolute; left: -4px; top: -5px; width: 8px; height: 8px; border-radius: 50%; background: var(--rose); }
+.cat-legend { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ---------- Task board ---------- */
+.board { display: grid; grid-template-columns: repeat(3, minmax(250px, 1fr)); gap: 16px; overflow-x: auto; align-items: start; }
+.col { background: var(--surface); border: 1px solid var(--line); border-top: 3px solid var(--c); border-radius: var(--radius); padding: 14px; min-height: 140px; }
+.col h4 { margin: 0 0 12px; font-size: 13px; letter-spacing: .08em; display: flex; align-items: center; gap: 8px; }
+.col h4::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+.col h4 .n { color: var(--muted); }
+.col.drag { background: var(--surface-2); }
+.task { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px; margin-bottom: 10px; cursor: grab; box-shadow: var(--shadow); }
+.task .t { font-weight: 550; margin: 6px 0 8px; }
+.task .foot { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--muted); }
+.task .foot .sp { flex: 1; }
+.task .due.late { color: var(--rose); font-weight: 600; }
+.task.done .t { text-decoration: line-through; color: var(--muted); }
+
+/* ---------- Every-day list ---------- */
+.habit-table { width: 100%; border-collapse: separate; border-spacing: 0 6px; min-width: 620px; }
+.habit-table th { font-size: 12px; color: var(--muted); font-weight: 600; padding: 4px; text-align: center; }
+.habit-table th.today { color: var(--accent); }
+.habit-table td { text-align: center; padding: 3px; }
+.habit-table td.name { text-align: left; font-weight: 550; padding-right: 12px; white-space: nowrap; }
+.habit-table td.streak { font-size: 13px; color: var(--text-2); white-space: nowrap; }
+.hcell { width: 32px; height: 32px; border-radius: 9px; border: 1.5px solid var(--line); background: var(--surface); padding: 0; color: transparent; display: inline-grid; place-items: center; }
+.hcell svg { width: 15px; height: 15px; stroke: currentColor; stroke-width: 2.6; fill: none; }
+.hcell.on { background: var(--c); border-color: var(--c); color: #fff; }
+.hcell:disabled { opacity: .35; cursor: default; }
+.heat { display: grid; grid-template-columns: repeat(15, minmax(0, 28px)); gap: 6px; margin: 6px 0 4px; }
+.heat-w { display: grid; grid-template-rows: repeat(7, 1fr); gap: 3px; }
+.heat-w i { aspect-ratio: 1; border-radius: 3px; background: var(--line-2); display: block; }
+.heat-w i.l1 { background: color-mix(in srgb, var(--accent) 30%, var(--line-2)); }
+.heat-w i.l2 { background: color-mix(in srgb, var(--accent) 60%, var(--line-2)); }
+.heat-w i.l3 { background: var(--accent); }
+.heat-w i.fut { background: transparent; border: 1px dashed var(--line); }
+.heat-labels { display: grid; grid-template-columns: repeat(15, minmax(0, 28px)); gap: 6px; font-size: 11px; color: var(--muted); text-align: center; }
+
+/* ---------- Notes ---------- */
+.moods { display: flex; gap: 6px; flex-wrap: wrap; }
+.mood { border: 1px solid var(--line); background: var(--surface); border-radius: 99px; padding: 5px 12px; font-size: 13px; color: var(--text-2); }
+.mood.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+textarea.input { width: 100%; min-height: 140px; resize: vertical; line-height: 1.5; }
+.note-list { display: flex; flex-direction: column; gap: 8px; max-height: 520px; overflow-y: auto; }
+.note-item { text-align: left; border: 1px solid var(--line-2); background: var(--surface-2); border-radius: 12px; padding: 10px 12px; }
+.note-item.sel { border-color: var(--accent); }
+.note-item b { font-size: 13.5px; }
+.note-item p { margin: 3px 0 0; font-size: 13px; color: var(--text-2); overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+
+/* ---------- Recent activity ---------- */
+.feed { display: flex; flex-direction: column; gap: 10px; max-height: 330px; overflow-y: auto; }
+.feed div { display: flex; gap: 10px; font-size: 13.5px; align-items: baseline; }
+.feed time { color: var(--muted); font-size: 12px; white-space: nowrap; margin-left: auto; }
+.feed div::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex: none; transform: translateY(-2px); }
+
+/* ---------- Modal ---------- */
+.modal-bg { position: fixed; inset: 0; background: rgba(10, 14, 18, .45); display: none; place-items: center; z-index: 50; padding: 16px; }
+.modal-bg.open { display: grid; }
+.modal { background: var(--surface); border-radius: var(--radius); padding: 22px; width: 100%; max-width: 480px; max-height: calc(100vh - 32px); overflow-y: auto; border: 1px solid var(--line); }
+.modal h3 { margin: 0 0 14px; }
+.modal label { display: block; font-size: 12.5px; color: var(--muted); font-weight: 600; margin: 10px 0 4px; }
+.modal .input { width: 100%; }
+.modal .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.modal .days { display: flex; gap: 4px; flex-wrap: wrap; }
+.modal .days label { margin: 0; display: inline-flex; align-items: center; gap: 4px; font-size: 13px; color: var(--text-2); border: 1px solid var(--line); border-radius: 8px; padding: 4px 8px; font-weight: 500; cursor: pointer; }
+.modal .actions { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; margin-top: 18px; }
+.modal .actions .danger { margin-right: auto; color: var(--rose); }
+
+.toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--text); color: var(--surface); padding: 10px 16px; border-radius: 10px; font-size: 14px; opacity: 0; transition: .25s; pointer-events: none; z-index: 60; }
+.toast.show { opacity: 1; transform: translateX(-50%); }
+
+/* ---------- Responsive ---------- */
+.scrim { display: none; }
+@media (max-width: 1100px) {
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .two { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 860px) {
+  .sidebar { position: fixed; left: 0; top: 0; z-index: 40; transform: translateX(-100%); transition: transform .25s; box-shadow: 0 0 40px rgba(0,0,0,.15); }
+  body.nav-open .sidebar { transform: none; }
+  body.nav-open .scrim { display: block; position: fixed; inset: 0; background: rgba(0,0,0,.3); z-index: 30; }
+  .main { padding: 16px 16px 60px; }
+  .topbar { display: flex !important; }
+}
+@media (max-width: 520px) {
+  .stat { min-height: 120px; padding: 14px; }
+  .stat .big { font-size: 32px; }
+  .slot { grid-template-columns: 70px 1fr auto; gap: 8px; }
+  .view-head h2 { font-size: 22px; }
+  .week-nav .label { min-width: 0; }
+  .gantt { --nc: 150px; }
+  .gantt-inner { min-width: 640px; }
+  .g-name { font-size: 13px; }
+}
+.topbar { display: none; align-items: center; gap: 12px; margin-bottom: 14px; }
+.topbar button { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; width: 40px; height: 40px; font-size: 18px; }
+.topbar b { font-size: 16px; }
+
+/* ---------- Previous weeks ---------- */
+.hist-chart { display: grid; grid-template-columns: repeat(15, minmax(0, 1fr)); gap: 8px; align-items: end; height: 170px; }
+.hist-col { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 4px; min-width: 0; }
+.hist-col .stack { width: 100%; max-width: 34px; flex: 1; display: flex; flex-direction: column; justify-content: flex-end; position: relative; }
+.hist-col .plan { position: absolute; left: 0; right: 0; bottom: 0; border: 1.5px dashed var(--line); border-radius: 6px 6px 0 0; }
+.hist-col .done { position: relative; background: var(--accent); border-radius: 6px 6px 0 0; min-height: 0; }
+.hist-col .v { font-size: 11px; color: var(--text-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.hist-col .w { font-size: 11.5px; color: var(--muted); font-weight: 600; }
+.hist-col.cur .w { color: var(--accent); }
+.hist-col.fut .w { opacity: .5; }
+.hist-week { margin-bottom: 16px; }
+.hist-week .mini { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-bottom: 16px; }
+.hist-week .mini > div { background: var(--surface-2); border: 1px solid var(--line-2); border-radius: 12px; padding: 10px 12px; }
+.hist-week .mini b { font-size: 22px; display: block; letter-spacing: -.02em; }
+.hist-week .mini span { font-size: 12px; color: var(--muted); }
+.hist-cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; }
+.hist-cols h4 { margin: 0 0 8px; font-size: 13px; color: var(--text-2); letter-spacing: .04em; text-transform: uppercase; }
+.hist-row { display: grid; grid-template-columns: 90px 1fr auto; gap: 10px; align-items: center; font-size: 13px; margin-bottom: 7px; }
+.hist-row .bar { margin: 0; height: 8px; }
+.hist-list { margin: 0; padding: 0; list-style: none; font-size: 13.5px; display: flex; flex-direction: column; gap: 5px; }
+.hist-list li::before { content: "✓"; color: var(--accent); font-weight: 700; margin-right: 8px; }
+.hist-days summary { cursor: pointer; font-size: 13.5px; color: var(--accent); font-weight: 600; margin-top: 14px; }
+.hist-days .day { margin-top: 10px; font-size: 13px; }
+.hist-days .day b { display: block; margin-bottom: 3px; }
+.hist-days .day span { color: var(--text-2); }
+@media (max-width: 760px) {
+  .hist-week .mini { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hist-cols { grid-template-columns: minmax(0, 1fr); }
+  .hist-chart { gap: 3px; height: 140px; }
+  .hist-col .v { display: none; }
+}
+
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="logo" id="logo">AA</div>
+      <div>
+        <h1 id="appTitle">My Daily Planner</h1>
+        <small id="appSub"></small>
+      </div>
+      <button class="menu-btn" id="closeNav" aria-label="Close menu">☰</button>
+    </div>
+
+    <nav class="nav" id="nav">
+      <a href="#today" data-view="today">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>
+        Today
+      </a>
+      <a href="#week" data-view="week">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></svg>
+        Weekly schedule
+      </a>
+      <a href="#courses" data-view="courses">
+        <svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/></svg>
+        Courses &amp; exams
+      </a>
+      <a href="#tasks" data-view="tasks">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="5" height="16" rx="1.5"/><rect x="10" y="3" width="5" height="11" rx="1.5"/><rect x="17" y="3" width="4" height="7" rx="1.5"/></svg>
+        Tasks
+      </a>
+      <a href="#goals" data-view="goals">
+        <svg viewBox="0 0 24 24"><path d="M4 6h10M4 12h16M4 18h7"/></svg>
+        Goals
+      </a>
+      <a href="#daily" data-view="daily">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.5 2.5L16 9.5"/></svg>
+        Things I can do every day
+      </a>
+      <a href="#notes" data-view="notes">
+        <svg viewBox="0 0 24 24"><path d="M14 3H6.5A2.5 2.5 0 0 0 4 5.5v13A2.5 2.5 0 0 0 6.5 21h11a2.5 2.5 0 0 0 2.5-2.5V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg>
+        Daily notes
+      </a>
+      <a href="#history" data-view="history">
+        <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5M12 7.5V12l3 2"/></svg>
+        Previous weeks
+      </a>
+    </nav>
+
+    <div>
+      <div class="side-label">THIS WEEK</div>
+      <div class="side-box">
+        <div class="mini-week">
+          <div><b class="num" id="sideWeek">1</b> <span>/ <span id="sideWeeks">15</span></span></div>
+          <span id="sideRange"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="saved-box">
+      <b>Saved</b>
+      <span id="savedAt">Your data is stored in this browser.</span>
+      <div class="row">
+        <button id="exportBtn" title="Download your data as JSON">Back up</button>
+        <button id="importBtn" title="Restore a JSON backup">Restore</button>
+        <button id="resetBtn" title="Go back to the defaults in data.js">Reset</button>
+        <button id="themeBtn" title="Light / dark theme">Theme</button>
+      </div>
+      <input type="file" id="importFile" accept="application/json" hidden>
+    </div>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+
+  <main class="main">
+    <div class="topbar">
+      <button id="openNav" aria-label="Open menu">☰</button>
+      <b id="topTitle">Today</b>
+    </div>
+
+    <!-- ============ TODAY ============ -->
+    <section class="view" id="view-today">
+      <div class="view-head">
+        <div>
+          <h2 id="todayTitle">Today</h2>
+          <p id="todaySub"></p>
+        </div>
+      </div>
+      <div class="grid stats" id="stats"></div>
+      <div class="grid two">
+        <div class="card">
+          <h3>Today's schedule <span class="sub" id="agendaSub"></span></h3>
+          <div class="agenda" id="agenda"></div>
+          <form class="inline-form" id="quickBlock" style="margin-top:12px">
+            <input class="input" type="time" id="qbStart" required aria-label="Start">
+            <input class="input" type="time" id="qbEnd" required aria-label="End">
+            <input class="input grow" id="qbTitle" placeholder="Add a block just for today…" required>
+            <button class="btn" type="submit">Add</button>
+          </form>
+        </div>
+        <div class="grid" style="gap:16px">
+          <div class="card">
+            <h3>Upcoming exams <a class="sub" href="#courses">all →</a></h3>
+            <div id="nextExams"></div>
+          </div>
+          <div class="card">
+            <h3>Today's tasks <a class="sub" href="#tasks">board →</a></h3>
+            <div id="todayTasks"></div>
+            <form class="inline-form" id="quickTask" style="margin-top:10px">
+              <input class="input grow" id="qtTitle" placeholder="Quick add a task…" required>
+              <button class="btn" type="submit">Add</button>
+            </form>
+          </div>
+          <div class="card">
+            <h3>Things I can do every day <a class="sub" href="#daily">list →</a></h3>
+            <div id="todayDaily"></div>
+            <form class="inline-form" id="quickDaily" style="margin-top:10px">
+              <input class="input grow" id="qdName" placeholder="Add something to do every day…" required>
+              <button class="btn" type="submit">Add</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:16px">
+        <h3>15-week roadmap <a class="sub" href="#goals">goals →</a></h3>
+        <div class="gantt" id="ganttMini"></div>
+      </div>
+      <div class="card">
+        <h3>Recent activity</h3>
+        <div class="feed" id="feed"></div>
+      </div>
+    </section>
+
+    <!-- ============ WEEKLY ============ -->
+    <section class="view" id="view-week">
+      <div class="view-head">
+        <div>
+          <h2>Weekly schedule</h2>
+          <p id="weekSummary"></p>
+        </div>
+        <div class="week-nav">
+          <button class="btn ghost" id="prevWeek" aria-label="Previous week">‹</button>
+          <div class="label" id="weekLabel"></div>
+          <button class="btn ghost" id="nextWeek" aria-label="Next week">›</button>
+          <button class="btn ghost" id="thisWeek">This week</button>
+          <button class="btn" id="addBlockBtn">+ Block</button>
+        </div>
+      </div>
+      <div class="card" style="padding:12px 12px 16px">
+        <div class="cat-legend" id="catLegend" style="margin:4px 4px 12px"></div>
+        <div class="week-scroll"><div class="week-grid" id="weekGrid"></div></div>
+      </div>
+    </section>
+
+    <!-- ============ COURSES ============ -->
+    <section class="view" id="view-courses">
+      <div class="view-head">
+        <div>
+          <h2>Courses &amp; exams</h2>
+          <p id="courseSummary"></p>
+        </div>
+      </div>
+      <div class="grid two">
+        <div class="card">
+          <h3>Weekly hours per course <span class="sub">class + planned study</span></h3>
+          <div id="courseList"></div>
+        </div>
+        <div class="card">
+          <h3>Exams &amp; deadlines</h3>
+          <div id="examList"></div>
+          <form id="examForm" style="margin-top:14px;display:grid;gap:8px">
+            <div class="inline-form">
+              <select class="input grow" id="exCourse" required></select>
+              <select class="input" id="exType">
+                <option>Midterm</option><option>Final</option><option>Quiz</option><option>Homework</option><option>Lab report</option><option>Make-up exam</option>
+              </select>
+            </div>
+            <div class="inline-form">
+              <input class="input grow" type="date" id="exDate" required aria-label="Date">
+              <input class="input" type="time" id="exTime" aria-label="Time">
+            </div>
+            <div class="inline-form">
+              <input class="input grow" id="exNote" placeholder="Note (topics, room…)">
+              <button class="btn" type="submit">Add</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TASKS ============ -->
+    <section class="view" id="view-tasks">
+      <div class="view-head">
+        <div>
+          <h2>Tasks</h2>
+          <p>Drag and drop cards, or move them with the arrows.</p>
+        </div>
+      </div>
+      <form class="inline-form card" id="taskForm" style="margin-bottom:16px;padding:14px">
+        <input class="input grow" id="tTitle" placeholder="New task…" required>
+        <select class="input" id="tCourse"></select>
+        <input class="input" type="date" id="tDue" aria-label="Due date">
+        <button class="btn" type="submit">+ Add task</button>
+      </form>
+      <div class="board" id="board"></div>
+    </section>
+
+    <!-- ============ GOALS ============ -->
+    <section class="view" id="view-goals">
+      <div class="view-head">
+        <div>
+          <h2>Goals</h2>
+          <p>Goals spread across 15 weeks. Click a bar to update its progress.</p>
+        </div>
+        <button class="btn" id="addGoalBtn">+ Goal</button>
+      </div>
+      <div class="card"><div class="gantt" id="ganttFull"></div></div>
+    </section>
+
+    <!-- ============ EVERY DAY ============ -->
+    <section class="view" id="view-daily">
+      <div class="view-head">
+        <div>
+          <h2>Things I can do every day</h2>
+          <p id="habitSub"></p>
+        </div>
+        <div class="week-nav">
+          <button class="btn ghost" id="hPrev" aria-label="Previous week">‹</button>
+          <div class="label" id="hLabel"></div>
+          <button class="btn ghost" id="hNext" aria-label="Next week">›</button>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:16px;overflow-x:auto">
+        <table class="habit-table" id="habitTable"></table>
+        <form class="inline-form" id="habitForm" style="margin-top:12px">
+          <input class="input grow" id="hName" placeholder="Write something you can do every day… (e.g. read for 20 min)" required>
+          <button class="btn" type="submit">Add</button>
+        </form>
+        <div id="dailySuggest" style="margin-top:12px"></div>
+      </div>
+      <div class="card">
+        <h3>15-week heatmap <span class="sub">share of items completed each day</span></h3>
+        <div class="heat" id="heat"></div>
+        <div class="heat-labels" id="heatLabels"></div>
+      </div>
+    </section>
+
+    <!-- ============ PREVIOUS WEEKS ============ -->
+    <section class="view" id="view-history">
+      <div class="view-head">
+        <div>
+          <h2>What I did in previous weeks</h2>
+          <p id="histSub"></p>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:16px">
+        <h3>Study hours by week <span class="sub">completed / planned</span></h3>
+        <div class="hist-chart" id="histChart"></div>
+      </div>
+      <div id="histWeeks"></div>
+    </section>
+
+    <!-- ============ NOTES ============ -->
+    <section class="view" id="view-notes">
+      <div class="view-head">
+        <div>
+          <h2>Daily notes</h2>
+          <p>A short note and your mood for each day.</p>
+        </div>
+        <input class="input" type="date" id="noteDate" aria-label="Note date">
+      </div>
+      <div class="grid two">
+        <div class="card">
+          <h3 id="noteTitle">Note</h3>
+          <div class="moods" id="noteMood" style="margin-bottom:12px"></div>
+          <textarea class="input" id="noteText" placeholder="What happened today? What went well, and what would you change?"></textarea>
+          <p class="sub" style="color:var(--muted);font-size:12.5px;margin:6px 0 0">Saves automatically as you type.</p>
+        </div>
+        <div class="card">
+          <h3>Past notes</h3>
+          <div class="note-list" id="noteList"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- Block editor -->
+<div class="modal-bg" id="blockModal">
+  <form class="modal" id="blockForm">
+    <h3 id="bmTitle">Block</h3>
+    <label for="bmName">Title</label>
+    <input class="input" id="bmName" required>
+    <div class="row2">
+      <div><label for="bmStart">Start</label><input class="input" type="time" id="bmStart" required></div>
+      <div><label for="bmEnd">End</label><input class="input" type="time" id="bmEnd" required></div>
+    </div>
+    <div class="row2">
+      <div><label for="bmType">Type</label><select class="input" id="bmType"></select></div>
+      <div><label for="bmCourse">Course</label><select class="input" id="bmCourse"></select></div>
+    </div>
+    <label for="bmNote">Note</label>
+    <input class="input" id="bmNote">
+    <div id="bmDaysWrap">
+      <label>Repeats on</label>
+      <div class="days" id="bmDays"></div>
+    </div>
+    <div id="bmDoneWrap" style="margin-top:12px">
+      <label style="display:flex;gap:8px;align-items:center;color:var(--text-2);font-size:14px;font-weight:500;margin:0"><input type="checkbox" id="bmDone"> <span id="bmDoneLabel">Done on this day</span></label>
+    </div>
+    <div class="actions">
+      <button type="button" class="btn ghost danger" id="bmDelete">Delete</button>
+      <button type="button" class="btn ghost" id="bmCancel">Cancel</button>
+      <button type="submit" class="btn">Save</button>
+    </div>
+  </form>
+</div>
+
+<!-- Goal editor -->
+<div class="modal-bg" id="goalModal">
+  <form class="modal" id="goalForm">
+    <h3 id="gmTitle">Goal</h3>
+    <label for="gmName">Goal</label>
+    <input class="input" id="gmName" required>
+    <div class="row2">
+      <div><label for="gmStart">Start week</label><input class="input" type="number" min="1" id="gmStart" required></div>
+      <div><label for="gmEnd">End week</label><input class="input" type="number" min="1" id="gmEnd" required></div>
+    </div>
+    <label for="gmCourse">Course</label>
+    <select class="input" id="gmCourse"></select>
+    <label for="gmProg">Progress: <span id="gmProgVal">0</span>%</label>
+    <input type="range" min="0" max="100" step="5" id="gmProg" style="width:100%">
+    <div class="actions">
+      <button type="button" class="btn ghost danger" id="gmDelete">Delete</button>
+      <button type="button" class="btn ghost" id="gmCancel">Cancel</button>
+      <button type="submit" class="btn">Save</button>
+    </div>
+  </form>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   My Daily Planner — default data
+   Edit this file to change the starting schedule.
+   Note: these defaults are copied into the browser the first time the page opens;
+   later changes you make on the page are stored in the browser (localStorage).
+   After editing data.js, press "Reset" (bottom left) to load the new defaults.
+   ========================================================= */
+
+window.CONFIG = {
+  owner: "Ayşe Aksoy",
+  initials: "AA",
+  title: "My Daily Planner",
+  subtitle: "Fall 2026 · Semester 1",
+  startDate: "2026-10-10",   // first day of week 1
+  weeks: 15,
+  classesEnd: "2026-12-29",  // last day of classes (class blocks are hidden after this date)
+  dayStart: 7,               // first hour shown in the weekly view
+  dayEnd: 24,                // last hour shown in the weekly view
+  dataVersion: 6
+};
+
+/* Courses — color: green | teal | amber | violet | rose | blue | slate */
+window.COURSES = [
+  { code: "MAT101", name: "Mathematics I", teacher: "Assoc. Prof. Dr. Nezihe Turhan Turan", room: "HZ-72", color: "green", target: 8 },
+  { code: "PHY101", name: "Physics I", teacher: "Lecturer Dr. Gürkan Ergün", room: "HZ-72", color: "teal", target: 7 },
+  { code: "CHE107", name: "Chemistry for Engineers", teacher: "Asst. Prof. Dr. Sema Demirci Uzun", room: "H1-60 · Lab H2-65", color: "amber", target: 4 },
+  { code: "EEE101", name: "Intro to Electrical-Electronics Eng.", teacher: "Res. Asst. Dr. İsmail Akdağ", room: "B1-04", color: "violet", target: 2 },
+  { code: "ATA101", name: "Atatürk's Principles & History of Revolution I", teacher: "Lecturer Dr. Yaşar Aldırmaz", room: "Online", color: "rose", target: 0.5 },
+  { code: "TDE101", name: "Turkish Language I", teacher: "Lecturer Dr. Esra Akyol Dönmez", room: "Online", color: "rose", target: 0.5 },
+  { code: "PYTHON", name: "Python (self-study)", teacher: "Self-study", room: "Computer · online resources", color: "blue", target: 8.75 }
+];
+
+/* Block types */
+window.TYPES = {
+  ders:    { label: "Class",    color: "slate" },
+  calisma: { label: "Study",    color: "green" },
+  rutin:   { label: "Routine",  color: "slate" },
+  plan:    { label: "Planning", color: "violet" }
+};
+
+/* Weekly routine
+   days: 0=Sunday, 1=Monday, 2=Tuesday, 3=Wednesday, 4=Thursday, 5=Friday, 6=Saturday
+   Blocks with type "ders" are fixed classes (from the course schedule). */
+const R = (id, days, start, end, title, type, course, note, extra) => ({ id, days, start, end, title, type, course: course || "", note: note || "", ...(extra || {}) });
+
+/* Physics lab every 2 weeks, Wednesday 13:30–15:00 (replaces the Physics lecture that week).
+   Week 1 starts Oct 10, so lab weeks are: 2, 4, 6, 8, 10, 12 */
+const FIZ_LAB_WEEKS = [2, 4, 6, 8, 10, 12];
+
+window.DEFAULT_ROUTINE = [
+  /* ---------- Fixed classes (haftalikDersProgrami.pdf) ---------- */
+  R("d-fiz-pzt", [1], "10:10", "12:30", "Physics I", "ders", "PHY101", "HZ-72"),
+  R("d-kim-sal", [2], "11:00", "12:30", "Chemistry for Engineers", "ders", "CHE107", "H1-60"),
+  R("d-ata-sal", [2], "13:30", "15:00", "Atatürk's Principles & History of Revolution I", "ders", "ATA101", "Online"),
+  R("d-tde-sal", [2], "15:10", "16:40", "Turkish Language I", "ders", "TDE101", "Online"),
+  R("d-mat-car", [3], "10:10", "12:30", "Mathematics I", "ders", "MAT101", "HZ-72"),
+  R("d-fiz-car", [3], "13:30", "15:00", "Physics I", "ders", "PHY101", "HZ-72", { notWeeks: FIZ_LAB_WEEKS }),
+  R("d-fizlab-car", [3], "13:30", "15:00", "Physics Lab", "ders", "PHY101", "Every 2 weeks", { weeks: FIZ_LAB_WEEKS }),
+  R("d-kimlab-car", [3], "15:10", "16:40", "Chemistry Lab", "ders", "CHE107", "H2-65 General Chemistry Lab"),
+  R("d-mat-per", [4], "08:30", "10:00", "Mathematics I", "ders", "MAT101", "HZ-72"),
+  R("d-eee-per", [4], "11:00", "12:30", "Intro to Electrical-Electronics Eng.", "ders", "EEE101", "B1-04"),
+
+  /* ---------- Daily routine ---------- */
+  R("r-plan", [0, 1, 2, 3, 4, 5, 6], "23:00", "23:15", "Plan tomorrow & write a daily note", "plan", "", "Bed at 23:30"),
+
+  /* ---------- Physics lab weeks (every 2 weeks) ---------- */
+  R("c-fizlab-hazirlik", [2], "18:00", "18:45", "Physics lab: read the lab sheet & prepare", "calisma", "PHY101", "Lab is tomorrow", { weeks: FIZ_LAB_WEEKS }),
+  R("c-fizlab-rapor", [4], "17:00", "18:30", "Write the physics lab report", "calisma", "PHY101", "The day after the lab, while the data is fresh", { weeks: FIZ_LAB_WEEKS }),
+  R("c-fizlab-son", [5], "11:00", "11:30", "Physics lab report: final check", "calisma", "PHY101", "Graphs, units, error analysis", { weeks: FIZ_LAB_WEEKS }),
+
+  /* ---------- Monday ---------- */
+  R("c-pzt-1", [1], "08:30", "09:45", "Math: last week's problem set", "calisma", "MAT101"),
+  R("c-pzt-2", [1], "13:30", "15:00", "Physics: review today's lecture + problems", "calisma", "PHY101", "Same-day review"),
+  R("c-pzt-3", [1], "15:30", "16:30", "EEE: review last lecture", "calisma", "EEE101"),
+  R("c-pzt-4", [1], "20:00", "21:00", "Chemistry: pre-read for tomorrow's class", "calisma", "CHE107"),
+
+  /* ---------- Tuesday ---------- */
+  R("c-sal-1", [2], "08:30", "10:00", "Physics: problem solving", "calisma", "PHY101"),
+  R("c-sal-2", [2], "17:00", "18:00", "Chemistry: review today's lecture", "calisma", "CHE107"),
+  R("c-sal-3", [2], "20:00", "21:00", "Math: prepare for tomorrow's class", "calisma", "MAT101"),
+
+  /* ---------- Wednesday (busiest class day) ---------- */
+  R("c-car-1", [3], "08:15", "09:45", "Chemistry: lab sheet & preparation", "calisma", "CHE107", "Read the sheet before lab"),
+  R("c-car-2", [3], "20:00", "21:00", "Math: review today's lecture", "calisma", "MAT101"),
+
+  /* ---------- Thursday ---------- */
+  R("c-per-1", [4], "10:05", "10:50", "Math: tidy up this morning's notes", "calisma", "MAT101", "Gap between classes"),
+  R("c-per-2", [4], "13:30", "15:00", "Math: problem solving", "calisma", "MAT101"),
+  R("c-per-3", [4], "15:30", "16:30", "EEE: review today's lecture", "calisma", "EEE101"),
+  R("c-per-4", [4], "20:00", "21:00", "Physics: review this week's lectures", "calisma", "PHY101"),
+
+  /* ---------- Friday (no classes = deep study) ---------- */
+  R("c-cum-1", [5], "09:30", "11:00", "Physics: weekly problem set", "calisma", "PHY101"),
+  R("c-cum-2", [5], "11:30", "12:30", "Chemistry: review + lab report", "calisma", "CHE107"),
+  R("c-cum-3", [5], "13:30", "15:00", "Math: weekly problem set", "calisma", "MAT101"),
+  R("c-cum-4", [5], "15:30", "16:00", "Atatürk's Principles: weekly review", "calisma", "ATA101", "Watch the online lecture recording"),
+  R("c-cum-4b", [5], "16:00", "16:30", "Turkish Language: weekly review", "calisma", "TDE101", "Watch the online lecture recording"),
+
+  /* ---------- Saturday (light day) ---------- */
+  R("c-cmt-1", [6], "10:30", "11:15", "Weekly review: Math", "calisma", "MAT101", "Close this week's gaps"),
+  R("c-cmt-1b", [6], "11:15", "12:00", "Weekly review: Physics", "calisma", "PHY101"),
+  R("c-cmt-2", [6], "14:30", "15:30", "Homework & missing topics", "calisma", ""),
+
+  /* ---------- Sunday ---------- */
+  R("c-paz-1", [0], "15:00", "16:00", "Physics: pre-read for Monday's lecture", "calisma", "PHY101"),
+  R("p-paz", [0], "16:00", "16:30", "Weekly review & planning", "plan"),
+
+  /* ---------- Python study ---------- */
+  R("py-pzt", [1], "21:00", "22:00", "Python: new topic (basics)", "calisma", "PYTHON", "Variables, conditions, loops…"),
+  R("py-sal", [2], "21:00", "22:00", "Python: practice exercises", "calisma", "PYTHON", "Exercises on yesterday's topic"),
+  R("py-car", [3], "21:00", "21:45", "Python: short review", "calisma", "PYTHON", "Busy day — keep it light"),
+  R("py-per", [4], "21:00", "22:00", "Python: new topic", "calisma", "PYTHON"),
+  R("py-cum", [5], "19:30", "21:30", "Python: mini project", "calisma", "PYTHON", "Write a small program with this week's topics"),
+  R("py-cmt", [6], "15:30", "17:00", "Python: practice & project", "calisma", "PYTHON"),
+  R("py-paz", [0], "11:00", "12:30", "Python: weekly review & new topic", "calisma", "PYTHON")
+];
+
+/* 15-week goals (week numbers 1–15) */
+window.DEFAULT_GOALS = [
+  { id: "g1", title: "Review every lecture the same or next day", startW: 1, endW: 12, progress: 0, course: "" },
+  { id: "g2", title: "Physics I: 30 problems a week", startW: 1, endW: 12, progress: 0, course: "PHY101" },
+  { id: "g3", title: "Mathematics I: end-of-topic problem sets", startW: 1, endW: 12, progress: 0, course: "MAT101" },
+  { id: "g4", title: "Hand in chemistry lab reports on time", startW: 1, endW: 12, progress: 0, course: "CHE107" },
+  { id: "g9", title: "Physics lab reports (6 reports)", startW: 2, endW: 12, progress: 0, course: "PHY101", note: "Lab weeks: 2, 4, 6, 8, 10, 12" },
+  { id: "g5", title: "Midterm preparation", startW: 3, endW: 6, progress: 0, course: "", note: "Add the dates under 'Courses & exams'" },
+  { id: "g6", title: "Final exam preparation", startW: 12, endW: 15, progress: 0, course: "" },
+  { id: "g8", title: "Python: finish the basics + 3 mini projects", startW: 1, endW: 15, progress: 0, course: "PYTHON" }
+];
+
+/* "Things I can do every day" list — starts empty, add items on the page */
+window.DEFAULT_HABITS = [];
+
+/* One-click suggestions */
+window.DAILY_SUGGESTIONS = [
+  "Review the day's lectures", "Read for 20 min", "Drink 2 L of water",
+  "Learn 10 English words", "Sleep 7+ hours", "Pack tomorrow's bag", "30 min screen-free"
+];
+
+window.DEFAULT_TASKS = [
+  { id: "t1", title: "Find out the midterm dates and add them", course: "", due: "2026-10-12", status: "todo" },
+  { id: "t2", title: "Read the chemistry lab sheet", course: "CHE107", due: "2026-10-14", status: "todo" },
+  { id: "t3", title: "Tidy up math lecture notes", course: "MAT101", due: "2026-10-15", status: "todo" },
+  { id: "t4", title: "Physics: 30 problems on this week's topic", course: "PHY101", due: "2026-10-16", status: "todo" },
+  { id: "t5", title: "Watch the online lecture recordings (ATA, TDE)", course: "ATA101", due: "2026-10-16", status: "todo" }
+];
+
+/* Exams & deadlines — starts empty, add them on the page */
+window.DEFAULT_EXAMS = [];
+
+/* Used once to translate items saved by the earlier Turkish version */
+window.TR_EN = {
+  "Günün derslerini tekrar et": "Review the day's lectures", "20 dk kitap oku": "Read for 20 min", "2 L su iç": "Drink 2 L of water",
+  "10 İngilizce kelime": "Learn 10 English words", "7+ saat uyu": "Sleep 7+ hours", "Yarının çantasını hazırla": "Pack tomorrow's bag",
+  "Ekransız 30 dk": "30 min screen-free",
+  "Vize": "Midterm", "Ödev": "Homework", "Lab raporu": "Lab report", "Bütünleme": "Make-up exam"
+};
+
+</script>
+<script>
+/* =========================================================
+   My Daily Planner — app
+   ========================================================= */
+(function () {
+  "use strict";
+
+  const C = window.CONFIG;
+  const STORE = "gunluk-program-v1";
+  const THEME = "gunluk-program-theme";
+  const DAY_S = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const DAY_L = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const MON_L = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const MOODS = [["5", "Great"], ["4", "Good"], ["3", "Okay"], ["2", "Tired"], ["1", "Tough day"]];
+  const STATUSES = [
+    { id: "todo", label: "TO DO", color: "amber" },
+    { id: "doing", label: "IN PROGRESS", color: "teal" },
+    { id: "done", label: "DONE", color: "green" }
+  ];
+  const PX = 56; // height of one hour in the weekly view
+  const CHECK = '<svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>';
+
+  /* ---------- helpers ---------- */
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const pad = (n) => String(n).padStart(2, "0");
+  const key = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const parseKey = (s) => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
+  const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+  const toMin = (t) => { const [h, m] = t.split(":").map(Number); return h * 60 + m; };
+  const dayDiff = (a, b) => Math.round((parseKey(key(b)) - parseKey(key(a))) / 864e5);
+  const hrs = (min) => (min / 60).toLocaleString("en-US", { maximumFractionDigits: 1 });
+  const uid = () => Math.random().toString(36).slice(2, 9);
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const clone = (o) => JSON.parse(JSON.stringify(o));
+  const fmtShort = (d) => `${MON[d.getMonth()]} ${d.getDate()}`;
+  const fmtLong = (d) => `${DAY_L[d.getDay()]}, ${MON_L[d.getMonth()]} ${d.getDate()}`;
+  const COLORS = {
+    green: ["var(--accent)", "var(--accent-soft)"],
+    teal: ["var(--teal)", "var(--teal-soft)"],
+    amber: ["var(--amber)", "var(--amber-soft)"],
+    violet: ["var(--violet)", "var(--violet-soft)"],
+    rose: ["var(--rose)", "var(--rose-soft)"],
+    blue: ["var(--blue)", "var(--blue-soft)"],
+    slate: ["var(--slate)", "var(--slate-soft)"]
+  };
+  const cv = (name) => { const [c, s] = COLORS[name] || COLORS.slate; return `--c:${c};--cs:${s}`; };
+  const course = (code) => window.COURSES.find((c) => c.code === code);
+  const blockColor = (b) => (b.course && course(b.course) ? course(b.course).color : (window.TYPES[b.type] || {}).color || "slate");
+
+  const START = parseKey(C.startDate);
+  const CLASSES_END = parseKey(C.classesEnd);
+  const now = () => new Date();
+  const weekOf = (d) => Math.floor(dayDiff(START, d) / 7) + 1;
+  const weekStart = (w) => addDays(START, (w - 1) * 7);
+  const clampW = (w) => Math.min(Math.max(w, 1), C.weeks);
+  const curWeek = () => clampW(weekOf(now()));
+
+  /* ---------- state ---------- */
+  function defaults() {
+    return {
+      v: C.dataVersion,
+      routine: clone(window.DEFAULT_ROUTINE),
+      extra: {}, done: {}, skip: {},
+      tasks: clone(window.DEFAULT_TASKS),
+      habits: clone(window.DEFAULT_HABITS), habitLog: {},
+      goals: clone(window.DEFAULT_GOALS),
+      notes: {},
+      exams: clone(window.DEFAULT_EXAMS || []),
+      activity: [{ t: Date.now(), msg: "Planner created — week 1 has started" }],
+      savedAt: Date.now()
+    };
+  }
+  let state;
+  try { state = JSON.parse(localStorage.getItem(STORE)); } catch (e) { state = null; }
+  if (!state || !Array.isArray(state.routine)) state = defaults();
+  const base = defaults();
+  for (const k of Object.keys(base)) if (state[k] === undefined) state[k] = base[k];
+  // if the routine in data.js changed, load the new routine (other records are kept)
+  if (state.v !== C.dataVersion) {
+    if ((state.v || 1) < 2) state.habits = state.habits.filter((h) => !/^h\d$/.test(h.id)); // remove old sample habits
+    if ((state.v || 1) < 5 && !state.goals.some((g) => g.id === "g9")) { // physics lab goal
+      const g9 = window.DEFAULT_GOALS.find((g) => g.id === "g9"); if (g9) state.goals.splice(Math.min(4, state.goals.length), 0, clone(g9));
+    }
+    if ((state.v || 1) < 4 && !state.goals.some((g) => g.id === "g8")) { // Python goal added
+      const g8 = window.DEFAULT_GOALS.find((g) => g.id === "g8"); if (g8) state.goals.push(clone(g8));
+    }
+    if ((state.v || 1) < 3) { // sport removed
+      state.goals = state.goals.filter((g) => g.id !== "g7");
+      state.habits = state.habits.filter((h) => !/^spor/i.test(h.name));
+    }
+    if ((state.v || 1) < 6) { // switched to English
+      const tr = window.TR_EN || {};
+      for (const g of state.goals) { const d = window.DEFAULT_GOALS.find((x) => x.id === g.id); if (d) { g.title = d.title; g.note = d.note || ""; } }
+      for (const t of state.tasks) { const d = window.DEFAULT_TASKS.find((x) => x.id === t.id); if (d) t.title = d.title; }
+      for (const h of state.habits) if (tr[h.name]) h.name = tr[h.name];
+      for (const x of state.exams) if (tr[x.type]) x.type = tr[x.type];
+      state.activity = [{ t: Date.now(), msg: "Planner switched to English" }];
+    }
+    state.routine = clone(window.DEFAULT_ROUTINE); state.v = C.dataVersion;
+    try { localStorage.setItem(STORE, JSON.stringify(state)); } catch (e) { /* unavailable */ }
+  }
+
+  function save() {
+    state.savedAt = Date.now();
+    try { localStorage.setItem(STORE, JSON.stringify(state)); } catch (e) { /* storage may be disabled */ }
+    renderSaved();
+  }
+  function log(msg) {
+    state.activity.unshift({ t: Date.now(), msg });
+    state.activity = state.activity.slice(0, 60);
+  }
+  function ago(t) {
+    const s = Math.round((Date.now() - t) / 1000);
+    if (s < 60) return "just now";
+    if (s < 3600) return `${Math.floor(s / 60)} min ago`;
+    if (s < 86400) return `${Math.floor(s / 3600)} h ago`;
+    const n = Math.floor(s / 86400); return `${n} day${n > 1 ? "s" : ""} ago`;
+  }
+  function toast(msg) {
+    const el = $("#toast"); el.textContent = msg; el.classList.add("show");
+    clearTimeout(toast._t); toast._t = setTimeout(() => el.classList.remove("show"), 2200);
+  }
+
+  /* ---------- schedule blocks ---------- */
+  function blocksFor(d) {
+    const k = key(d), dow = d.getDay(), skip = state.skip[k] || {};
+    const list = state.routine
+      .filter((b) => b.days.includes(dow) && !skip[b.id])
+      .filter((b) => (!b.weeks || b.weeks.includes(weekOf(d))) && (!b.notWeeks || !b.notWeeks.includes(weekOf(d))))
+      .filter((b) => !(b.type === "ders" && d > CLASSES_END))
+      .map((b) => ({ ...b, routine: true }));
+    for (const b of state.extra[k] || []) list.push({ ...b, routine: false });
+    return list.sort((a, b) => toMin(a.start) - toMin(b.start));
+  }
+  const isDone = (k, id) => !!(state.done[k] && state.done[k][id]);
+  function setDone(k, id, val) {
+    state.done[k] = state.done[k] || {};
+    if (val) state.done[k][id] = true; else delete state.done[k][id];
+  }
+  const counted = (b) => b.type !== "serbest" && b.type !== "rutin";
+  const dur = (b) => Math.max(0, toMin(b.end) - toMin(b.start));
+
+  function weekStats(w) {
+    let study = 0, studyDone = 0, cls = 0;
+    for (let i = 0; i < 7; i++) {
+      const d = addDays(weekStart(w), i), k = key(d);
+      for (const b of blocksFor(d)) {
+        if (b.type === "calisma") { study += dur(b); if (isDone(k, b.id)) studyDone += dur(b); }
+        if (b.type === "ders") cls += dur(b);
+      }
+    }
+    return { study, studyDone, cls };
+  }
+
+  /* ---------- routing ---------- */
+  const TITLES = { today: "Today", week: "Weekly schedule", courses: "Courses & exams", tasks: "Tasks", goals: "Goals", daily: "Things I can do every day", notes: "Daily notes", history: "Previous weeks" };
+  function route() {
+    let v = location.hash.replace("#", "");
+    if (!TITLES[v]) v = "today";
+    $$(".view").forEach((el) => el.classList.toggle("active", el.id === "view-" + v));
+    $$(".nav a").forEach((a) => a.classList.toggle("active", a.dataset.view === v));
+    $("#topTitle").textContent = TITLES[v];
+    document.body.classList.remove("nav-open");
+    render(v);
+    window.scrollTo(0, 0);
+  }
+  function render(v) {
+    v = v || (location.hash.replace("#", "") || "today");
+    renderSide();
+    ({ today: renderToday, week: renderWeek, courses: renderCourses, tasks: renderBoard, goals: renderGoals, daily: renderHabits, notes: renderNotes, history: renderHistory }[v] || renderToday)();
+  }
+
+  /* ---------- sidebar ---------- */
+  function renderSide() {
+    $("#logo").textContent = C.initials;
+    $("#appTitle").textContent = C.title;
+    $("#appSub").textContent = C.subtitle;
+    const w = curWeek();
+    $("#sideWeek").textContent = w;
+    $("#sideWeeks").textContent = C.weeks;
+    $("#sideRange").textContent = `${fmtShort(weekStart(w))} – ${fmtShort(addDays(weekStart(w), 6))}`;
+    renderSaved();
+  }
+  function renderSaved() {
+    const d = new Date(state.savedAt);
+    $("#savedAt").textContent = `Last saved ${fmtShort(d)} ${pad(d.getHours())}:${pad(d.getMinutes())} · your data is stored in this browser.`;
+  }
+
+  /* ---------- TODAY ---------- */
+  function gauge(done, total) {
+    const r = 70, len = Math.PI * r, p = total ? done / total : 0;
+    return `<svg class="gauge" viewBox="0 0 180 104" role="img" aria-label="${done} / ${total} items">
+      <path d="M20 94 A70 70 0 0 1 160 94" fill="none" stroke="var(--line-2)" stroke-width="16" stroke-linecap="round"/>
+      ${p > 0 ? `<path d="M20 94 A70 70 0 0 1 160 94" fill="none" stroke="var(--teal)" stroke-width="16" stroke-linecap="round"
+        stroke-dasharray="${(len * p).toFixed(1)} ${len.toFixed(1)}" style="transition:stroke-dasharray .4s"/>` : ""}
+      <text x="90" y="86" text-anchor="middle" font-size="34" font-weight="700" fill="var(--text)">${done}<tspan font-size="18" fill="var(--muted)">/${total}</tspan></text>
+    </svg>`;
+  }
+  function habitStreak(hid) {
+    let n = 0, d = now();
+    const today = state.habitLog[key(d)] || {};
+    if (!today[hid]) d = addDays(d, -1); // if not done yet today, count from yesterday
+    while (d >= START && (state.habitLog[key(d)] || {})[hid]) { n++; d = addDays(d, -1); }
+    return n;
+  }
+
+  function renderToday() {
+    const d = now(), k = key(d), w = curWeek(), wk = weekOf(d);
+    $("#todayTitle").textContent = `Hi ${C.owner.split(" ")[0]} · ${fmtLong(d)}`;
+    $("#todaySub").textContent = wk < 1
+      ? `The planner starts on ${fmtShort(START)}.`
+      : `Week ${w} · ${fmtShort(weekStart(w))} – ${fmtShort(addDays(weekStart(w), 6))}${d > CLASSES_END ? " · classes are over, finals period" : ""}`;
+
+    const blocks = blocksFor(d), cnt = blocks.filter(counted);
+    const doneN = cnt.filter((b) => isDone(k, b.id)).length;
+    const pct = cnt.length ? Math.round((doneN / cnt.length) * 100) : 0;
+    const ws = weekStats(w);
+    const hDone = state.habits.filter((h) => (state.habitLog[k] || {})[h.id]).length;
+    const openTasks = state.tasks.filter((t) => t.status !== "done").length;
+
+    $("#stats").innerHTML = `
+      <div class="card stat"><div class="big num">${w}<small> / ${C.weeks}</small></div><div class="lbl">Week</div>
+        <div class="bar"><i style="width:${(w / C.weeks) * 100}%"></i></div></div>
+      <div class="card stat"><div class="big num">${pct}%</div><div class="lbl">Today's schedule</div>
+        <div class="hint">${doneN} / ${cnt.length} blocks done</div><div class="bar"><i style="width:${pct}%"></i></div></div>
+      <div class="card stat"><div class="big num">${hrs(ws.studyDone)}<small> / ${hrs(ws.study)} h</small></div><div class="lbl">Study this week</div>
+        <div class="hint">${openTasks} open task${openTasks === 1 ? "" : "s"}</div><div class="bar"><i style="width:${ws.study ? (ws.studyDone / ws.study) * 100 : 0}%"></i></div></div>
+      <div class="card stat" style="padding-top:14px"><div class="lbl" style="margin:0 0 6px">Every-day list</div>${state.habits.length ? gauge(hDone, state.habits.length) : `<div class="hint" style="padding:22px 0"><a href="#daily">Create your list →</a></div>`}
+        ${state.habits.length ? `<div class="legend"><span style="--c:var(--teal)">Done <b>${hDone}</b></span><span style="--c:var(--line)">Left <b>${state.habits.length - hDone}</b></span></div>` : ""}</div>`;
+
+    // agenda
+    const nm = d.getHours() * 60 + d.getMinutes();
+    $("#agendaSub").textContent = `${blocks.length} blocks`;
+    $("#agenda").innerHTML = blocks.length ? blocks.map((b) => {
+      const on = isDone(k, b.id), isNow = nm >= toMin(b.start) && nm < toMin(b.end);
+      const c = course(b.course);
+      const meta = [window.TYPES[b.type]?.label, c ? c.code : "", b.note, !b.routine ? "today only" : ""].filter(Boolean).join(" · ");
+      return `<div class="slot ${on ? "done" : ""} ${isNow ? "now" : ""} ${b.type === "ders" ? "fixed" : ""}" style="${cv(blockColor(b))}">
+        <div class="time num">${b.start}–${b.end}</div>
+        <div><div class="t" data-edit="${b.id}" style="cursor:pointer">${esc(b.title)}</div><div class="meta">${esc(meta)}</div></div>
+        <button class="check ${on ? "on" : ""}" data-done="${b.id}" aria-label="Mark as done">${CHECK}</button>
+      </div>`;
+    }).join("") : `<div class="empty">No blocks today.</div>`;
+
+    // exams
+    const up = upcomingExams().slice(0, 3);
+    $("#nextExams").innerHTML = up.length ? up.map(examRow).join("") :
+      `<div class="empty">No exams added yet. Once you know the dates, add them under <a href="#courses">Courses &amp; exams</a>.</div>`;
+
+    // tasks
+    const tt = state.tasks.filter((t) => t.status !== "done" && t.due && t.due <= addKey(k, 2))
+      .sort((a, b) => a.due.localeCompare(b.due));
+    $("#todayTasks").innerHTML = tt.length ? `<div class="agenda">${tt.map((t) => {
+      const c = course(t.course), late = t.due < k;
+      return `<div class="slot" style="${cv(c ? c.color : "slate")};grid-template-columns:1fr auto">
+        <div><div class="t">${esc(t.title)}</div><div class="meta ${late ? "late" : ""}" style="${late ? "color:var(--rose);font-weight:600" : ""}">${dueText(t.due)}${c ? " · " + c.code : ""}</div></div>
+        <button class="check" data-task-done="${t.id}" aria-label="Complete task">${CHECK}</button></div>`;
+    }).join("")}</div>` : `<div class="empty">No tasks for the next 2 days.</div>`;
+
+    // every-day list
+    const hlog = state.habitLog[k] || {}, note = state.notes[k] || {};
+    $("#todayDaily").innerHTML = state.habits.length ? `<div style="display:flex;flex-direction:column;gap:8px">
+      ${state.habits.map((h) => `<label style="display:flex;align-items:center;gap:10px;cursor:pointer;${hlog[h.id] ? "color:var(--muted);text-decoration:line-through" : ""}">
+        <button type="button" class="hcell ${hlog[h.id] ? "on" : ""}" style="${cv(h.color)};width:26px;height:26px;flex:none" data-habit="${h.id}" data-day="${k}">${CHECK}</button>${esc(h.name)}</label>`).join("")}</div>`
+      : `<div class="empty" style="padding-top:0">Your list is empty. Add things you can do every day below; the checkmarks reset each morning.</div>${suggestHTML()}`;
+
+    $("#ganttMini").innerHTML = ganttHTML(false);
+    $("#feed").innerHTML = state.activity.slice(0, 14).map((a) => `<div><span>${esc(a.msg)}</span><time>${ago(a.t)}</time></div>`).join("") || `<div class="empty">No activity yet.</div>`;
+  }
+  const addKey = (k, n) => key(addDays(parseKey(k), n));
+  function dueText(due) {
+    if (!due) return "";
+    const n = dayDiff(now(), parseKey(due));
+    if (n === 0) return "Today";
+    if (n === 1) return "Tomorrow";
+    if (n === -1) return "Yesterday (overdue)";
+    if (n < 0) return `${-n} days overdue`;
+    return `${fmtShort(parseKey(due))} · in ${n} days`;
+  }
+
+  /* ---------- 15-week timeline ---------- */
+  function ganttHTML(full) {
+    const W = C.weeks, cw = curWeek(), endW = weekOf(CLASSES_END);
+    const head = `<div class="g-row g-head" style="--w:${W}"><div></div>${Array.from({ length: W }, (_, i) =>
+      `<div class="${i + 1 === cw ? "cur" : ""}" title="${fmtShort(weekStart(i + 1))}">W${i + 1}</div>`).join("")}</div>`;
+    const rows = state.goals.map((g, i) => {
+      const c = course(g.course), s = clampW(g.startW), e = clampW(Math.max(g.endW, g.startW));
+      const left = `calc(var(--nc) + (100% - var(--nc)) * ${(s - 1) / W} + 3px)`;
+      const width = `calc((100% - var(--nc)) * ${(e - s + 1) / W} - 6px)`;
+      return `<div class="g-row" style="--w:${W}">
+        <div class="g-name"><code>${i + 1}</code><span>${esc(g.title)}${g.note && full ? `<br><small style="color:var(--muted)">${esc(g.note)}</small>` : ""}</span></div>
+        ${Array.from({ length: W }, (_, j) => `<div class="g-cell ${j + 1 === cw ? "cur" : ""}"></div>`).join("")}
+        <div class="g-bar" data-goal="${g.id}" style="${cv(c ? c.color : "green")};left:${left};width:${width};cursor:pointer" title="${esc(g.title)} · ${g.progress}%">
+          <i style="width:${g.progress}%"></i><span>${g.progress}%</span></div>
+      </div>`;
+    }).join("");
+    return `<div class="gantt-inner">${head}${rows}</div>
+      <div class="g-legend"><span><i style="background:var(--line)"></i>This week (W${cw})</span>
+      <span><i style="background:var(--rose-soft);border:1px solid var(--rose)"></i>Classes end: ${fmtShort(CLASSES_END)} (W${endW})</span>
+      <span>W${endW + 1 > W ? W : endW + 1}–W${W}: finals period</span></div>`;
+  }
+
+  /* ---------- WEEKLY ---------- */
+  let viewWeek = curWeek();
+  function renderWeek() {
+    const w = viewWeek, ws = weekStats(w), s = weekStart(w);
+    $("#weekLabel").textContent = `Week ${w} · ${fmtShort(s)} – ${fmtShort(addDays(s, 6))}`;
+    $("#weekSummary").textContent = `${hrs(ws.cls)} h of class · ${hrs(ws.study)} h of planned study · ${hrs(ws.studyDone)} h done`;
+    $("#prevWeek").disabled = w <= 1; $("#nextWeek").disabled = w >= C.weeks;
+
+    const seen = new Set();
+    $("#catLegend").innerHTML = window.COURSES.filter((c) => { if (seen.has(c.color)) return false; seen.add(c.color); return true; })
+      .map((c) => `<span class="tag" style="${cv(c.color)}">${c.color === "rose" ? "ATA · TDE" : c.code}</span>`).join("") +
+      `<span class="tag" style="${cv("violet")}">Planning</span>
+       <span class="tag" style="background:transparent;color:var(--muted)">Dark boxes: fixed classes · light boxes: study</span>`;
+
+    const H0 = C.dayStart, H1 = C.dayEnd, height = (H1 - H0) * PX, today = key(now());
+    let html = `<div class="wg-head"></div>`;
+    for (let i = 0; i < 7; i++) {
+      const d = addDays(s, i), isT = key(d) === today;
+      html += `<div class="wg-head ${isT ? "today" : ""}"><b>${DAY_S[d.getDay()]}</b><span>${fmtShort(d)}${isT ? " · today" : ""}</span></div>`;
+    }
+    html += `<div class="wg-hours" style="height:${height}px">${Array.from({ length: H1 - H0 }, (_, i) =>
+      i ? `<div style="top:${i * PX}px">${pad(H0 + i)}:00</div>` : "").join("")}</div>`;
+    const lines = Array.from({ length: H1 - H0 }, (_, i) => `<div class="wg-line" style="top:${i * PX}px"></div>`).join("");
+    for (let i = 0; i < 7; i++) {
+      const d = addDays(s, i), k = key(d), isT = k === today;
+      let col = `<div class="wg-col ${isT ? "today" : ""}" style="height:${height}px">${lines}`;
+      for (const b of blocksFor(d)) {
+        const top = ((toMin(b.start) - H0 * 60) / 60) * PX, h = Math.max((dur(b) / 60) * PX - 2, 16);
+        const strong = b.type === "ders";
+        const bg = strong ? `background:color-mix(in srgb, var(--c) 24%, var(--surface));` : "";
+        col += `<div class="wg-block ${isDone(k, b.id) ? "done" : ""}" data-edit="${b.id}" data-day="${k}"
+          style="${cv(blockColor(b))};${bg}top:${top}px;height:${h}px" title="${esc(b.start + "–" + b.end + " " + b.title)}">
+          <b>${esc(b.title)}</b>${h > 40 ? `<span>${b.start}–${b.end}${b.note && h > 70 ? " · " + esc(b.note) : ""}</span>` : ""}</div>`;
+      }
+      if (isT) {
+        const n = now(), m = n.getHours() * 60 + n.getMinutes();
+        if (m >= H0 * 60 && m <= H1 * 60) col += `<div class="now-line" style="top:${((m - H0 * 60) / 60) * PX}px"></div>`;
+      }
+      html += col + `</div>`;
+    }
+    $("#weekGrid").innerHTML = html;
+  }
+
+  /* ---------- block editor ---------- */
+  let editing = null; // {id, day, routine, isNew}
+  function fillSelects() {
+    const typeOpts = Object.entries(window.TYPES).map(([k, t]) => `<option value="${k}">${t.label}</option>`).join("");
+    const courseOpts = `<option value="">— No course —</option>` + window.COURSES.map((c) => `<option value="${c.code}">${c.code} · ${esc(c.name)}</option>`).join("");
+    $("#bmType").innerHTML = typeOpts;
+    $("#bmCourse").innerHTML = courseOpts;
+    $("#gmCourse").innerHTML = courseOpts;
+    $("#tCourse").innerHTML = courseOpts;
+    $("#exCourse").innerHTML = window.COURSES.map((c) => `<option value="${c.code}">${c.code} · ${esc(c.name)}</option>`).join("");
+    $("#bmDays").innerHTML = [1, 2, 3, 4, 5, 6, 0].map((d) => `<label><input type="checkbox" value="${d}"> ${DAY_S[d]}</label>`).join("");
+  }
+  function openBlock(id, day, isNew) {
+    const k = day || key(now());
+    let b;
+    if (isNew) b = { id: "b-" + uid(), title: "", start: "09:00", end: "10:00", type: "calisma", course: "", note: "", days: [parseKey(k).getDay()] };
+    else b = state.routine.find((x) => x.id === id) || (state.extra[k] || []).find((x) => x.id === id);
+    if (!b) return;
+    const routine = isNew || state.routine.includes(b);
+    editing = { id: b.id, day: k, routine, isNew, ref: b };
+    $("#bmTitle").textContent = isNew ? "New repeating block" : routine ? (b.weeks || b.notWeeks ? "Block (every 2 weeks)" : "Block (repeats every week)") : `Today-only block · ${fmtShort(parseKey(k))}`;
+    $("#bmName").value = b.title; $("#bmStart").value = b.start; $("#bmEnd").value = b.end;
+    $("#bmType").value = b.type; $("#bmCourse").value = b.course || ""; $("#bmNote").value = b.note || "";
+    $("#bmDaysWrap").style.display = routine ? "" : "none";
+    $$("#bmDays input").forEach((i) => (i.checked = (b.days || []).includes(+i.value)));
+    $("#bmDoneWrap").style.display = isNew ? "none" : "";
+    $("#bmDone").checked = isDone(k, b.id);
+    $("#bmDoneLabel").textContent = `Done on ${fmtShort(parseKey(k))}`;
+    $("#bmDelete").style.display = isNew ? "none" : "";
+    $("#bmDelete").textContent = routine ? "Delete every week" : "Delete";
+    let skip = $("#bmSkip");
+    if (!skip) {
+      skip = document.createElement("button"); skip.type = "button"; skip.id = "bmSkip"; skip.className = "btn ghost";
+      skip.textContent = "Remove for this day only"; $("#bmDelete").after(skip);
+      skip.addEventListener("click", () => {
+        state.skip[editing.day] = state.skip[editing.day] || {}; state.skip[editing.day][editing.id] = true;
+        log(`Removed “${editing.ref.title}” for ${fmtShort(parseKey(editing.day))}`); save(); closeModals(); render();
+      });
+    }
+    skip.style.display = routine && !isNew ? "" : "none";
+    $("#blockModal").classList.add("open");
+    setTimeout(() => $("#bmName").focus(), 30);
+  }
+  function closeModals() { $$(".modal-bg").forEach((m) => m.classList.remove("open")); editing = null; }
+
+  $("#blockForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    if (!editing) return;
+    const start = $("#bmStart").value, end = $("#bmEnd").value;
+    if (toMin(end) <= toMin(start)) { toast("End time must be after the start time"); return; }
+    const b = editing.ref;
+    Object.assign(b, { title: $("#bmName").value.trim(), start, end, type: $("#bmType").value, course: $("#bmCourse").value, note: $("#bmNote").value.trim() });
+    if (editing.routine) {
+      b.days = $$("#bmDays input").filter((i) => i.checked).map((i) => +i.value);
+      if (!b.days.length) { toast("Pick at least one day"); return; }
+    }
+    if (editing.isNew) { state.routine.push(b); log(`New block added: ${b.title}`); }
+    else {
+      const was = isDone(editing.day, b.id), now_ = $("#bmDone").checked;
+      setDone(editing.day, b.id, now_);
+      if (now_ && !was) log(`Done: ${b.title}`);
+      else log(`Block updated: ${b.title}`);
+    }
+    save(); closeModals(); render();
+  });
+  $("#bmDelete").addEventListener("click", () => {
+    if (!editing) return;
+    if (editing.routine) state.routine = state.routine.filter((x) => x.id !== editing.id);
+    else state.extra[editing.day] = (state.extra[editing.day] || []).filter((x) => x.id !== editing.id);
+    log(`Block deleted: ${editing.ref.title}`); save(); closeModals(); render();
+  });
+  $("#bmCancel").addEventListener("click", closeModals);
+  $("#gmCancel").addEventListener("click", closeModals);
+  $$(".modal-bg").forEach((m) => m.addEventListener("click", (e) => { if (e.target === m) closeModals(); }));
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModals(); });
+
+  /* ---------- COURSES & EXAMS ---------- */
+  function courseHours() {
+    const res = {};
+    for (const c of window.COURSES) res[c.code] = { cls: 0, study: 0 };
+    for (const b of state.routine) {
+      if (!b.course || !res[b.course]) continue;
+      const cw = Math.max(weekOf(CLASSES_END), 1); // number of weeks with classes
+      const f = b.weeks ? b.weeks.length / cw : b.notWeeks ? 1 - b.notWeeks.length / cw : 1;
+      const m = dur(b) * b.days.length * f;
+      if (b.type === "ders") res[b.course].cls += m;
+      if (b.type === "calisma") res[b.course].study += m;
+    }
+    return res;
+  }
+  function upcomingExams() {
+    const t = key(now());
+    return state.exams.filter((x) => x.date >= t).sort((a, b) => (a.date + (a.time || "")).localeCompare(b.date + (b.time || "")));
+  }
+  function examRow(x) {
+    const c = course(x.course), n = dayDiff(now(), parseKey(x.date)), past = n < 0;
+    const when = n === 0 ? "Today" : n === 1 ? "Tomorrow" : past ? "Past" : `${n} days left`;
+    return `<div class="slot" style="${cv(c ? c.color : "slate")};grid-template-columns:1fr auto auto;margin-bottom:8px;${past ? "opacity:.55" : ""}">
+      <div><div class="t">${c ? esc(c.name) : esc(x.course)} · ${esc(x.type)}</div>
+      <div class="meta">${fmtLong(parseKey(x.date))}${x.time ? " · " + x.time : ""}${x.note ? " · " + esc(x.note) : ""}</div></div>
+      <span class="tag" style="${cv(n <= 3 && !past ? "rose" : "slate")}">${when}</span>
+      <button class="icon-btn" data-del-exam="${x.id}" aria-label="Delete exam">✕</button></div>`;
+  }
+  function renderCourses() {
+    const h = courseHours();
+    let totC = 0, totS = 0;
+    const max = Math.max(...window.COURSES.map((c) => h[c.code].cls + Math.max(h[c.code].study, (c.target || 0) * 60)), 60);
+    $("#courseList").innerHTML = window.COURSES.map((c) => {
+      const x = h[c.code]; totC += x.cls; totS += x.study;
+      const [col] = COLORS[c.color] || COLORS.slate;
+      const tgt = (c.target || 0) * 60;
+      return `<div style="padding:12px 0;border-bottom:1px solid var(--line-2)">
+        <div style="display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap">
+          <div><span class="tag" style="${cv(c.color)}">${c.code}</span> <b style="margin-left:4px">${esc(c.name)}</b></div>
+          <span class="num" style="font-size:13px;color:var(--text-2)">${hrs(x.cls)} h class · <b>${hrs(x.study)} h</b> study${tgt ? ` / target ${hrs(tgt)}` : ""}</span>
+        </div>
+        <div style="font-size:12.5px;color:var(--muted);margin:3px 0 8px">${esc(c.teacher)} · ${esc(c.room)}</div>
+        <div class="bar" style="margin:0;height:10px;display:flex;background:var(--line-2)">
+          <i style="width:${(x.cls / max) * 100}%;background:${col};border-radius:99px 0 0 99px"></i>
+          <i style="width:${(x.study / max) * 100}%;background:color-mix(in srgb, ${col} 40%, var(--surface));border-radius:0 99px 99px 0"></i>
+        </div></div>`;
+    }).join("") + `<div class="g-legend" style="margin-top:12px"><span><i style="background:var(--slate)"></i>Class hours</span><span><i style="background:color-mix(in srgb, var(--slate) 40%, var(--surface))"></i>Planned self-study</span></div>`;
+    $("#courseSummary").textContent = `${window.COURSES.length} courses · ${hrs(totC)} h of class + ${hrs(totS)} h of course study per week`;
+    const all = [...state.exams].sort((a, b) => a.date.localeCompare(b.date));
+    $("#examList").innerHTML = all.length ? all.map(examRow).join("") : `<div class="empty">No exams or deadlines added yet.</div>`;
+  }
+  $("#examForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const x = { id: "e-" + uid(), course: $("#exCourse").value, type: $("#exType").value, date: $("#exDate").value, time: $("#exTime").value, note: $("#exNote").value.trim() };
+    state.exams.push(x);
+    const c = course(x.course);
+    log(`Exam added: ${c ? c.name : x.course} ${x.type} (${fmtShort(parseKey(x.date))})`);
+    e.target.reset(); save(); render(); toast("Exam added");
+  });
+
+  /* ---------- TASKS ---------- */
+  function renderBoard() {
+    $("#board").innerHTML = STATUSES.map((s, si) => {
+      const items = state.tasks.filter((t) => t.status === s.id).sort((a, b) => (a.due || "9").localeCompare(b.due || "9"));
+      return `<div class="col" data-col="${s.id}" style="${cv(s.color)}">
+        <h4>${s.label} <span class="n">${items.length}</span></h4>
+        ${items.map((t) => {
+          const c = course(t.course), late = t.due && t.due < key(now()) && s.id !== "done";
+          return `<div class="task ${s.id === "done" ? "done" : ""}" draggable="true" data-task="${t.id}">
+            ${c ? `<span class="tag" style="${cv(c.color)}">${c.code}</span>` : `<span class="tag">General</span>`}
+            <div class="t">${esc(t.title)}</div>
+            <div class="foot"><span class="due ${late ? "late" : ""}">${t.due ? dueText(t.due) : "No date"}</span><span class="sp"></span>
+              ${si > 0 ? `<button class="icon-btn" data-move="${t.id}" data-dir="-1" aria-label="Move back">←</button>` : ""}
+              ${si < 2 ? `<button class="icon-btn" data-move="${t.id}" data-dir="1" aria-label="Move forward">→</button>` : ""}
+              <button class="icon-btn" data-del-task="${t.id}" aria-label="Delete task">✕</button></div></div>`;
+        }).join("") || `<div class="empty" style="text-align:center">Nothing here</div>`}
+      </div>`;
+    }).join("");
+  }
+  function moveTask(id, status) {
+    const t = state.tasks.find((x) => x.id === id);
+    if (!t || t.status === status) return;
+    t.status = status;
+    if (status === "done") t.doneAt = key(now()); else delete t.doneAt;
+    log(status === "done" ? `Task completed: ${t.title}` : `Task moved (${STATUSES.find((s) => s.id === status).label.toLowerCase()}): ${t.title}`);
+    save(); render();
+  }
+  $("#taskForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const t = { id: "t-" + uid(), title: $("#tTitle").value.trim(), course: $("#tCourse").value, due: $("#tDue").value, status: "todo" };
+    state.tasks.push(t); log(`Task added: ${t.title}`); e.target.reset(); save(); render();
+  });
+  $("#quickTask").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const t = { id: "t-" + uid(), title: $("#qtTitle").value.trim(), course: "", due: key(now()), status: "todo" };
+    state.tasks.push(t); log(`Task added: ${t.title}`); e.target.reset(); save(); render();
+  });
+  // drag and drop
+  document.addEventListener("dragstart", (e) => { const t = e.target.closest?.("[data-task]"); if (t) e.dataTransfer.setData("text/plain", t.dataset.task); });
+  document.addEventListener("dragover", (e) => { const c = e.target.closest?.("[data-col]"); if (c) { e.preventDefault(); c.classList.add("drag"); } });
+  document.addEventListener("dragleave", (e) => { const c = e.target.closest?.("[data-col]"); if (c) c.classList.remove("drag"); });
+  document.addEventListener("drop", (e) => {
+    const c = e.target.closest?.("[data-col]"); if (!c) return;
+    e.preventDefault(); moveTask(e.dataTransfer.getData("text/plain"), c.dataset.col);
+  });
+
+  /* ---------- GOALS ---------- */
+  function renderGoals() { $("#ganttFull").innerHTML = ganttHTML(true); }
+  let editingGoal = null;
+  function openGoal(id) {
+    const g = id ? state.goals.find((x) => x.id === id) : { id: "g-" + uid(), title: "", startW: curWeek(), endW: Math.min(curWeek() + 3, C.weeks), progress: 0, course: "" };
+    if (!g) return;
+    editingGoal = { g, isNew: !id };
+    $("#gmTitle").textContent = id ? "Edit goal" : "New goal";
+    $("#gmName").value = g.title; $("#gmStart").value = g.startW; $("#gmEnd").value = g.endW;
+    $("#gmStart").max = $("#gmEnd").max = C.weeks;
+    $("#gmCourse").value = g.course || ""; $("#gmProg").value = g.progress; $("#gmProgVal").textContent = g.progress;
+    $("#gmDelete").style.display = id ? "" : "none";
+    $("#goalModal").classList.add("open");
+  }
+  $("#gmProg").addEventListener("input", (e) => ($("#gmProgVal").textContent = e.target.value));
+  $("#goalForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const { g, isNew } = editingGoal, prev = g.progress;
+    const s = clampW(+$("#gmStart").value), en = clampW(+$("#gmEnd").value);
+    Object.assign(g, { title: $("#gmName").value.trim(), startW: Math.min(s, en), endW: Math.max(s, en), course: $("#gmCourse").value, progress: +$("#gmProg").value });
+    if (isNew) { state.goals.push(g); log(`Goal added: ${g.title}`); }
+    else log(g.progress !== prev ? `Goal progress ${g.progress}%: ${g.title}` : `Goal updated: ${g.title}`);
+    save(); closeModals(); editingGoal = null; render();
+  });
+  $("#gmDelete").addEventListener("click", () => {
+    state.goals = state.goals.filter((x) => x.id !== editingGoal.g.id);
+    log(`Goal deleted: ${editingGoal.g.title}`); save(); closeModals(); render();
+  });
+  $("#addGoalBtn").addEventListener("click", () => openGoal(null));
+
+  /* ---------- EVERY-DAY LIST ---------- */
+  let habitWeek = curWeek();
+  function renderHabits() {
+    const s = weekStart(habitWeek), today = key(now());
+    $("#hLabel").textContent = `Week ${habitWeek} · ${fmtShort(s)} – ${fmtShort(addDays(s, 6))}`;
+    $("#hPrev").disabled = habitWeek <= 1; $("#hNext").disabled = habitWeek >= C.weeks;
+    const days = Array.from({ length: 7 }, (_, i) => addDays(s, i));
+    $("#habitSub").textContent = state.habits.length ? `${state.habits.length} items · check off what you do each day and build your streak` : "Add the things you can do every day here.";
+    $("#dailySuggest").innerHTML = suggestHTML();
+    $("#habitTable").innerHTML = `<thead><tr><th></th>${days.map((d) => `<th class="${key(d) === today ? "today" : ""}">${DAY_S[d.getDay()]}<br><span style="font-weight:500">${d.getDate()}</span></th>`).join("")}<th>Streak</th><th></th></tr></thead>
+      <tbody>${state.habits.map((h) => `<tr><td class="name">${esc(h.name)}</td>${days.map((d) => {
+        const k = key(d), on = (state.habitLog[k] || {})[h.id];
+        return `<td><button class="hcell ${on ? "on" : ""}" style="${cv(h.color)}" data-habit="${h.id}" data-day="${k}" ${k > today ? "disabled" : ""} aria-label="${esc(h.name)} ${fmtShort(d)}">${CHECK}</button></td>`;
+      }).join("")}<td class="streak num">${(n => n + (n === 1 ? " day" : " days"))(habitStreak(h.id))}</td><td><button class="icon-btn" data-del-habit="${h.id}" aria-label="Delete item">✕</button></td></tr>`).join("") || `<tr><td colspan="10" class="empty" style="text-align:left">No items yet — add one below or click a suggestion.</td></tr>`}</tbody>`;
+    // heatmap
+    let heat = "";
+    for (let w = 1; w <= C.weeks; w++) {
+      heat += `<div class="heat-w">`;
+      for (let i = 0; i < 7; i++) {
+        const d = addDays(weekStart(w), i), k = key(d);
+        if (k > today) { heat += `<i class="fut" title="${fmtShort(d)}"></i>`; continue; }
+        const n = state.habits.filter((h) => (state.habitLog[k] || {})[h.id]).length, r = state.habits.length ? n / state.habits.length : 0;
+        heat += `<i class="${r === 0 ? "" : r < .4 ? "l1" : r < .8 ? "l2" : "l3"}" title="${fmtShort(d)}: ${n}/${state.habits.length}"></i>`;
+      }
+      heat += `</div>`;
+    }
+    $("#heat").innerHTML = heat;
+    $("#heatLabels").innerHTML = Array.from({ length: C.weeks }, (_, i) => `<span>W${i + 1}</span>`).join("");
+  }
+  $("#hPrev").addEventListener("click", () => { habitWeek = clampW(habitWeek - 1); renderHabits(); });
+  $("#hNext").addEventListener("click", () => { habitWeek = clampW(habitWeek + 1); renderHabits(); });
+  function addDaily(name) {
+    name = (name || "").trim(); if (!name) return;
+    if (state.habits.some((h) => h.name.toLowerCase() === name.toLowerCase())) { toast("This item is already on the list"); return; }
+    const palette = ["green", "teal", "violet", "amber", "rose", "blue", "slate"];
+    state.habits.push({ id: "h-" + uid(), name, color: palette[state.habits.length % palette.length] });
+    log(`Added to every-day list: ${name}`); save(); render();
+  }
+  function suggestHTML() {
+    const have = new Set(state.habits.map((h) => h.name.toLowerCase()));
+    const list = (window.DAILY_SUGGESTIONS || []).filter((s) => !have.has(s.toLowerCase()));
+    if (!list.length) return "";
+    return `<div style="font-size:12.5px;color:var(--muted);margin:4px 0 6px">Suggestions — click to add:</div>
+      <div class="moods">${list.map((s) => `<button type="button" class="mood" data-suggest="${esc(s)}">+ ${esc(s)}</button>`).join("")}</div>`;
+  }
+  $("#habitForm").addEventListener("submit", (e) => { e.preventDefault(); addDaily($("#hName").value); e.target.reset(); });
+  $("#quickDaily").addEventListener("submit", (e) => { e.preventDefault(); addDaily($("#qdName").value); e.target.reset(); });
+
+  /* ---------- PREVIOUS WEEKS ---------- */
+  function weekReport(w) {
+    const s = weekStart(w), today = key(now()), r = { w, start: s, study: 0, studyDone: 0, blocksDone: 0, byCourse: {}, days: [], tasks: [], notes: [], daily: 0, dailyMax: 0, moods: [] };
+    for (let i = 0; i < 7; i++) {
+      const d = addDays(s, i), k = key(d);
+      if (k > today) break;
+      const done = [];
+      for (const b of blocksFor(d)) {
+        if (b.type === "calisma") r.study += dur(b);
+        if (!isDone(k, b.id)) continue;
+        done.push(b); r.blocksDone++;
+        if (b.type === "calisma") {
+          r.studyDone += dur(b);
+          const c = b.course || "_";
+          r.byCourse[c] = (r.byCourse[c] || 0) + dur(b);
+        }
+      }
+      r.days.push({ d, done });
+      r.dailyMax += state.habits.length;
+      r.daily += state.habits.filter((h) => (state.habitLog[k] || {})[h.id]).length;
+      const n = state.notes[k];
+      if (n && (n.text || n.mood)) { r.notes.push({ d, ...n }); if (n.mood) r.moods.push(+n.mood); }
+    }
+    const end = key(addDays(s, 6));
+    r.tasks = state.tasks.filter((t) => t.status === "done" && t.doneAt && t.doneAt >= key(s) && t.doneAt <= end);
+    return r;
+  }
+  function renderHistory() {
+    const cw = curWeek(), started = weekOf(now()) >= 1;
+    const reps = []; for (let w = 1; w <= C.weeks; w++) reps.push(w <= cw && started ? weekReport(w) : null);
+    const planned = Array.from({ length: C.weeks }, (_, i) => weekStats(i + 1).study);
+    const max = Math.max(...planned, ...reps.map((r) => (r ? r.studyDone : 0)), 60);
+    $("#histChart").innerHTML = reps.map((r, i) => {
+      const w = i + 1, p = planned[i], dn = r ? r.studyDone : 0;
+      return `<div class="hist-col ${w === cw ? "cur" : ""} ${w > cw ? "fut" : ""}" title="Week ${w}: ${hrs(dn)} / ${hrs(p)} h">
+        <span class="v">${r ? hrs(dn) : ""}</span>
+        <div class="stack"><div class="plan" style="height:${(p / max) * 100}%"></div><div class="done" style="height:${(dn / max) * 100}%"></div></div>
+        <span class="w">W${w}</span></div>`;
+    }).join("");
+    const doneAll = reps.reduce((a, r) => a + (r ? r.studyDone : 0), 0);
+    $("#histSub").textContent = started ? `You're in week ${cw} · ${hrs(doneAll)} hours of study checked off so far` : `The planner starts on ${fmtShort(START)}.`;
+    const MOOD_L = { 5: "Great", 4: "Good", 3: "Okay", 2: "Tired", 1: "Tough day" };
+    $("#histWeeks").innerHTML = reps.filter(Boolean).reverse().map((r) => {
+      const isCur = r.w === cw, pct = r.study ? Math.round((r.studyDone / r.study) * 100) : 0;
+      const dailyPct = r.dailyMax ? Math.round((r.daily / r.dailyMax) * 100) : null;
+      const mood = r.moods.length ? MOOD_L[Math.round(r.moods.reduce((a, b) => a + b, 0) / r.moods.length)] : "—";
+      const courses = Object.entries(r.byCourse).sort((a, b) => b[1] - a[1]);
+      const cmax = Math.max(...courses.map((x) => x[1]), 1);
+      const empty = !r.blocksDone && !r.tasks.length && !r.notes.length && !r.daily;
+      return `<div class="card hist-week">
+        <h3>Week ${r.w} · ${fmtShort(r.start)} – ${fmtShort(addDays(r.start, 6))}
+          <span class="tag" style="${cv(isCur ? "green" : "slate")}">${isCur ? "This week · in progress" : "Completed"}</span></h3>
+        <div class="mini">
+          <div><b class="num">${hrs(r.studyDone)} h</b><span>study · ${pct}% of plan</span></div>
+          <div><b class="num">${r.blocksDone}</b><span>blocks done</span></div>
+          <div><b class="num">${r.tasks.length}</b><span>tasks finished</span></div>
+          <div><b class="num">${dailyPct === null || !state.habits.length ? "—" : dailyPct + "%"}</b><span>every-day list${r.moods.length ? " · mood: " + mood : ""}</span></div>
+        </div>
+        ${empty ? `<div class="empty">Nothing checked off this week yet. This fills up as you mark things done on the Today page.</div>` : `
+        <div class="hist-cols">
+          <div><h4>Study by course</h4>
+            ${courses.length ? courses.map(([code, m]) => {
+              const c = course(code);
+              return `<div class="hist-row" style="${cv(c ? c.color : "slate")}"><span class="tag">${c ? c.code : "General"}</span>
+                <div class="bar"><i style="width:${(m / cmax) * 100}%;background:var(--c)"></i></div><span class="num">${hrs(m)} h</span></div>`;
+            }).join("") : `<div class="empty" style="padding:0">No study blocks checked off.</div>`}
+          </div>
+          <div><h4>Tasks I finished</h4>
+            ${r.tasks.length ? `<ul class="hist-list">${r.tasks.map((t) => `<li>${esc(t.title)}</li>`).join("")}</ul>` : `<div class="empty" style="padding:0">No tasks finished this week.</div>`}
+            ${r.notes.length ? `<h4 style="margin-top:14px">My notes</h4>${r.notes.map((n) => `<div style="font-size:13px;margin-bottom:6px"><b>${DAY_S[n.d.getDay()]} ${fmtShort(n.d)}</b>${n.mood ? ` · ${MOOD_L[n.mood]}` : ""}${n.text ? `<div style="color:var(--text-2)">${esc(n.text.length > 160 ? n.text.slice(0, 160) + "…" : n.text)}</div>` : ""}</div>`).join("")}` : ""}
+          </div>
+        </div>
+        <details class="hist-days"><summary>What I did each day</summary>
+          ${r.days.map(({ d, done }) => `<div class="day"><b>${fmtLong(d)}</b><span>${done.length ? done.map((b) => esc(b.title)).join(" · ") : "—"}</span></div>`).join("")}
+        </details>`}
+      </div>`;
+    }).join("");
+  }
+
+  /* ---------- NOTES ---------- */
+  let noteDay = key(now());
+  function renderNotes() {
+    $("#noteDate").value = noteDay;
+    const n = state.notes[noteDay] || {};
+    $("#noteTitle").textContent = fmtLong(parseKey(noteDay));
+    $("#noteMood").innerHTML = MOODS.map(([v, l]) => `<button type="button" class="mood ${n.mood === v ? "on" : ""}" data-mood="${v}" data-day="${noteDay}">${l}</button>`).join("");
+    if (document.activeElement !== $("#noteText")) $("#noteText").value = n.text || "";
+    const keys = Object.keys(state.notes).filter((k) => state.notes[k].text || state.notes[k].mood).sort().reverse();
+    $("#noteList").innerHTML = keys.length ? keys.map((k) => {
+      const x = state.notes[k], m = MOODS.find((mm) => mm[0] === x.mood);
+      return `<button class="note-item ${k === noteDay ? "sel" : ""}" data-note="${k}"><b>${fmtLong(parseKey(k))}</b>${m ? ` <span class="tag" style="margin-left:6px">${m[1]}</span>` : ""}<p>${esc(x.text || "—")}</p></button>`;
+    }).join("") : `<div class="empty">No notes yet.</div>`;
+  }
+  $("#noteDate").addEventListener("change", (e) => { if (e.target.value) { noteDay = e.target.value; renderNotes(); } });
+  let noteTimer;
+  $("#noteText").addEventListener("input", (e) => {
+    state.notes[noteDay] = { ...(state.notes[noteDay] || {}), text: e.target.value };
+    clearTimeout(noteTimer);
+    noteTimer = setTimeout(() => { save(); renderNotes(); }, 500);
+  });
+  $("#noteText").addEventListener("blur", () => {
+    if (noteTimer) { clearTimeout(noteTimer); noteTimer = null; if ((state.notes[noteDay] || {}).text) log(`Daily note written (${fmtShort(parseKey(noteDay))})`); save(); renderNotes(); }
+  });
+
+  /* ---------- global click handler ---------- */
+  document.addEventListener("click", (e) => {
+    const t = e.target.closest("button, [data-edit], [data-goal], [data-note]");
+    if (!t) return;
+    const ds = t.dataset;
+    if (ds.done) {
+      const k = key(now()), b = blocksFor(now()).find((x) => x.id === ds.done), v = !isDone(k, ds.done);
+      setDone(k, ds.done, v); if (v && b) log(`Done: ${b.title}`); save(); render();
+    } else if (ds.edit) {
+      openBlock(ds.edit, ds.day || key(now()), false);
+    } else if (ds.taskDone) {
+      moveTask(ds.taskDone, "done");
+    } else if (ds.move) {
+      const tk = state.tasks.find((x) => x.id === ds.move), i = STATUSES.findIndex((s) => s.id === tk.status);
+      moveTask(ds.move, STATUSES[Math.min(Math.max(i + +ds.dir, 0), 2)].id);
+    } else if (ds.delTask) {
+      const tk = state.tasks.find((x) => x.id === ds.delTask);
+      state.tasks = state.tasks.filter((x) => x.id !== ds.delTask); log(`Task deleted: ${tk.title}`); save(); render();
+    } else if (ds.habit) {
+      const k = ds.day; state.habitLog[k] = state.habitLog[k] || {};
+      const h = state.habits.find((x) => x.id === ds.habit);
+      if (state.habitLog[k][ds.habit]) delete state.habitLog[k][ds.habit];
+      else { state.habitLog[k][ds.habit] = true; log(`Done: ${h.name} (${fmtShort(parseKey(k))})`); }
+      save(); render();
+    } else if (ds.delHabit) {
+      const h = state.habits.find((x) => x.id === ds.delHabit);
+      state.habits = state.habits.filter((x) => x.id !== ds.delHabit); log(`Removed from every-day list: ${h.name}`); save(); render();
+    } else if (ds.mood) {
+      const k = ds.day, cur = (state.notes[k] || {}).mood;
+      state.notes[k] = { ...(state.notes[k] || {}), mood: cur === ds.mood ? "" : ds.mood }; save(); render();
+    } else if (ds.goal) {
+      openGoal(ds.goal);
+    } else if (ds.note) {
+      noteDay = ds.note; renderNotes();
+    } else if (ds.suggest) {
+      addDaily(ds.suggest);
+    } else if (ds.delExam) {
+      state.exams = state.exams.filter((x) => x.id !== ds.delExam); log("Exam deleted"); save(); render();
+    }
+  });
+
+  /* ---------- week navigation ---------- */
+  $("#prevWeek").addEventListener("click", () => { viewWeek = clampW(viewWeek - 1); renderWeek(); });
+  $("#nextWeek").addEventListener("click", () => { viewWeek = clampW(viewWeek + 1); renderWeek(); });
+  $("#thisWeek").addEventListener("click", () => { viewWeek = curWeek(); renderWeek(); });
+  $("#addBlockBtn").addEventListener("click", () => openBlock(null, key(now()), true));
+  $("#quickBlock").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const start = $("#qbStart").value, end = $("#qbEnd").value;
+    if (toMin(end) <= toMin(start)) { toast("End time must be after the start time"); return; }
+    const k = key(now());
+    (state.extra[k] = state.extra[k] || []).push({ id: "x-" + uid(), start, end, title: $("#qbTitle").value.trim(), type: "calisma", course: "", note: "" });
+    log(`Block added for today: ${$("#qbTitle").value.trim()}`); e.target.reset(); save(); render();
+  });
+
+  /* ---------- menu, theme, backup ---------- */
+  $("#openNav").addEventListener("click", () => document.body.classList.add("nav-open"));
+  $("#closeNav").addEventListener("click", () => document.body.classList.toggle("nav-open"));
+  $("#scrim").addEventListener("click", () => document.body.classList.remove("nav-open"));
+
+  function applyTheme(t) { if (t) document.documentElement.setAttribute("data-theme", t); else document.documentElement.removeAttribute("data-theme"); }
+  let theme = null; try { theme = localStorage.getItem(THEME); } catch (e) { /* unavailable */ }
+  applyTheme(theme);
+  $("#themeBtn").addEventListener("click", () => {
+    const dark = theme ? theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    theme = dark ? "light" : "dark"; applyTheme(theme);
+    try { localStorage.setItem(THEME, theme); } catch (e) { /* unavailable */ }
+  });
+
+  $("#exportBtn").addEventListener("click", () => {
+    const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+    a.download = `daily-planner-backup-${key(now())}.json`; a.click(); URL.revokeObjectURL(a.href);
+    toast("Backup downloaded");
+  });
+  $("#importBtn").addEventListener("click", () => $("#importFile").click());
+  $("#importFile").addEventListener("change", (e) => {
+    const f = e.target.files[0]; if (!f) return;
+    f.text().then((txt) => {
+      const s = JSON.parse(txt);
+      if (!s || !Array.isArray(s.routine)) throw new Error("invalid");
+      state = { ...defaults(), ...s }; log("Backup restored"); save(); render(); toast("Backup restored");
+    }).catch(() => toast("This file is not a valid backup"));
+    e.target.value = "";
+  });
+  let resetArmed = false;
+  $("#resetBtn").addEventListener("click", (e) => {
+    if (!resetArmed) {
+      resetArmed = true; e.target.textContent = "Are you sure?";
+      setTimeout(() => { resetArmed = false; e.target.textContent = "Reset"; }, 3000);
+      return;
+    }
+    state = defaults(); save(); render(); toast("Back to the default schedule");
+    resetArmed = false; e.target.textContent = "Reset";
+  });
+
+  /* ---------- start ---------- */
+  fillSelects();
+  window.addEventListener("hashchange", route);
+  route();
+  let lastDay = key(now());
+  setInterval(() => {
+    const k = key(now());
+    if (k !== lastDay) { lastDay = k; noteDay = k; viewWeek = habitWeek = curWeek(); }
+    const v = location.hash.replace("#", "") || "today";
+    if ((v === "today" || v === "week") && !document.querySelector(".modal-bg.open") && !document.activeElement.matches("input, textarea, select")) render(v);
+  }, 60000);
+})();
+
+</script>
+</body>
+</html>
